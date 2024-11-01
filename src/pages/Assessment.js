@@ -2,9 +2,8 @@
 import React from "react";
 import BatchComponent from "../components/ListTable";
 import { useNavigate } from "react-router-dom";
-import MyClassCard from "../components/MyClassCard";
 
-const MyClass = () => {
+const AssessMent = () => {
   const apiUrl = "https://dummyjson.com/products"; // Replace with your actual API URL
   const navigate = useNavigate();
   const config = [
@@ -47,18 +46,17 @@ const MyClass = () => {
   return (
     <div className="">
       <BatchComponent
-        title="My Class"
+        title="Assessment Overview"
         apiUrl={apiUrl}
         config={config}
         onClickRow={handleRowSelect}
         buttonProp={{
-          onClick: () => navigate("/class/create"),
-          title: "MyClass",
+          onClick: () => navigate("/assessment/create"),
+          title: "Assessment",
         }}
       />
-      {/* <MyClassCard/> */}
     </div>
   );
 };
 
-export default MyClass;
+export default AssessMent;

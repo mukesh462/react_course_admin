@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useNavigate, useParams } from "react-router-dom";
+import useApi from "../components/useApi";
+import toast from "react-hot-toast";
 
 // Sample data for categories and subcategories
 const categories = {
@@ -10,99 +13,138 @@ const categories = {
 };
 
 const validationSchema = Yup.object().shape({
-  category: Yup.string().required("Category is required"),
-  subCategory: Yup.string().required("Sub Category is required"),
-  courseName: Yup.string().required("Course Name is required"),
+  category_id: Yup.string().required("Category is required"),
+  subcategory_id: Yup.string().required("Sub Category is required"),
+  course_name: Yup.string().required("Course Name is required"),
 });
 
 const CourseForm = () => {
   const [subCategories, setSubCategories] = useState([]);
 
   const handleCategoryChange = (setFieldValue, category) => {
-    setFieldValue("category", category);
-    setFieldValue("subCategory", ""); // Reset subcategory when category changes
-    setSubCategories(categories[category] || []);
+    setFieldValue("category_id", category);
+    setFieldValue("subcategory_id", ""); 
+    getSubCategory(category)
   };
+  const { id } = useParams();
+  const [isActive, setIsActive] = useState(true);
+  const { request } = useApi();
+  const navigate = useNavigate();
+  const [category, setcategory] = useState([]);
 
+  const [data, setData] = useState({ category_id: '', subcategory_id: '',course_name:"",status:"1"});
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await request("get", "course/" + id);
+      if (response.status) {
+        getSubCategory(response.data.category_id)
+        setIsActive(response.data.status == "1"? true : false)
+        setData(response.data);
+      }
+    };
+    if (id !== undefined) {
+      fetchData();
+    }
+    getCategory()
+  }, [id]);
+
+  const getCategory = async ()=>{
+    const response = await request("post", "category/getlist");
+    if (response.status) {
+     setcategory(response.data);
+    }
+  }
+  const getSubCategory = async (id)=>{
+    const response = await request("post", "subcategory/getallsubcategory_by_id",{
+      category_id:id
+    });
+    if (response.status) {
+     setSubCategories(response.data);
+    }
+  }
+  const submitForm = async (values, { setSubmitting, setErrors }) => {
+    try {
+      const postUrl = id ? "course/update/" + id:"course/create";
+     const res= await request("post", postUrl, values );
+      toast.success(res.message);
+      navigate('/course')
+      
+    } catch (error) {
+      setErrors({ submit: error.message });
+    } finally {
+      setSubmitting(false);
+    }
+  };
   return (
     <div className="max-w-lg mx-auto mt-10 p-5 border rounded shadow bg-white">
       <Formik
-        initialValues={{
-          category: "",
-          subCategory: "",
-          courseName: "",
-          status: false,
-        }}
+        initialValues={data}
         validationSchema={validationSchema}
-        onSubmit={(values, { setSubmitting }) => {
-          setTimeout(() => {
-            console.log("Form Data", values);
-            setSubmitting(false);
-          }, 400);
-        }}
+        onSubmit={submitForm}
+        enableReinitialize={true}
       >
         {({ isSubmitting, setFieldValue, values }) => (
           <Form>
             <div className="mb-6">
-              <label htmlFor="courseName" className="block font-bold">
+              <label htmlFor="course_name" className="block font-bold">
                 Course Name <span className="text-red-500">*</span>
               </label>
               <Field
                 type="text"
-                name="courseName"
+                name="course_name"
                 className="mt-2 block w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
               />
               <ErrorMessage
-                name="courseName"
+                name="course_name"
                 component="div"
                 className="text-red-600 text-sm mt-1"
               />
             </div>
             <div className="mb-6">
-              <label htmlFor="category" className="block font-bold">
+              <label htmlFor="category_id" className="block font-bold">
                 Category <span className="text-red-500">*</span>
               </label>
               <Field
                 as="select"
-                name="category"
+                name="category_id"
                 className="mt-2 block w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
                 onChange={(e) =>
                   handleCategoryChange(setFieldValue, e.target.value)
                 }
               >
-                <option value="">Select a category</option>
-                {Object.keys(categories).map((category) => (
-                  <option key={category} value={category}>
-                    {category}
+                <option value="">Select a Category</option>
+                {category.map((category) => (
+                  <option key={category._id} value={category._id}>
+                    {category.category_name}
                   </option>
                 ))}
               </Field>
               <ErrorMessage
-                name="category"
+                name="category_id"
                 component="div"
                 className="text-red-600 text-sm mt-1"
               />
             </div>
 
             <div className="mb-6">
-              <label htmlFor="subCategory" className="block font-bold">
+              <label htmlFor="subcategory_id" className="block font-bold">
                 Sub Category <span className="text-red-500">*</span>
               </label>
               <Field
                 as="select"
-                name="subCategory"
+                name="subcategory_id"
                 className="mt-2 block w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
-                disabled={!subCategories.length}
+                // disabled={subCategories.length ==0}
               >
                 <option value="">Select a sub category</option>
                 {subCategories.map((subCat) => (
-                  <option key={subCat} value={subCat}>
-                    {subCat}
+                  <option key={subCat._id} value={subCat._id}>
+                    {subCat.subcategory_name}
                   </option>
                 ))}
               </Field>
               <ErrorMessage
-                name="subCategory"
+                name="subcategory_id"
                 component="div"
                 className="text-red-600 text-sm mt-1"
               />

@@ -4,38 +4,42 @@ import BatchComponent from "../components/ListTable";
 import { useNavigate } from "react-router-dom";
 
 const Course = () => {
-  const apiUrl = "https://dummyjson.com/products"; // Replace with your actual API URL
+  const apiUrl = "course/list"; // Replace with your actual API URL
 const navigate = useNavigate();
   const config = [
     {
-      colname: "ID",
+      colname: "Course Name",
       sortable: true,
       className: "",
-      data: "id",
+      data: "course_name",
     //   render: (batch) => <p>{batch.id}</p>,
     },
     {
-      colname: "Title",
+      colname: "Category",
       sortable: true,
       className: "",
-      data: "title",
+      data: "category_name",
     },
     {
-      colname: "Price",
+      colname: "Sub Category",
       sortable: true,
       className: "",
-      data: "price",
+      data: "subcategory_name",
     //   render: (batch) => <p className="badge">{batch.price}</p>,
     },
     {
-      colname: "Stock",
-      sortable: true,
+      colname: "Action",
+      sortable: false,
       className: "",
-      data: "stock",
-      render: (batch) => <button className="btn bg-orange-500 text-white btn-sm">Edit</button>,
+      data: "_id",
+      render: (batch) => <button onClick={()=>handleEdit(batch)} className="btn btn-sm btn-primary">Edit</button>,
     },
   ];
-
+  const handleEdit =(e)=>{
+    // const dataGet = {file:e.profile,...e}
+    navigate(`/course/${e._id}`)
+    
+    }
   const handleRowSelect = (data) => {
     console.log("Selected Row Data:", data);
     // Add your logic for handling row clicks

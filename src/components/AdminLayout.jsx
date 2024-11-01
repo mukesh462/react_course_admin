@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SidebarComponent from './SideBar';
 import Header from './Header';
-
+import toast, { Toaster } from 'react-hot-toast';
 const AdminLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -42,6 +42,7 @@ const AdminLayout = ({ children }) => {
         <div className="flex-grow md:p-6 sm:p-2 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 overflow-x-hidden">
           {children}
         </div>
+        <Toaster/>
       </div>
     </div>
   );

@@ -2,28 +2,26 @@
 import React from "react";
 import BatchComponent from "../components/ListTable";
 import { useNavigate } from "react-router-dom";
+import { FaRegFileAlt } from "react-icons/fa";
 
-const Category = () => {
-  const apiUrl = "category/list"; 
+const MaterialLink = () => {
+  const apiUrl = "materialLink/list"; 
   const navigate = useNavigate();
   const config = [
     
     {
-      colname: "Category name",
+      colname: "Material name",
       sortable: true,
       className: "capitalize ",
-      data: "category_name",
+      data: "name",
     },
- 
     {
-      colname: "Status",
-      sortable: true,
-      className: "capitalize",
-      data: "status",
-      render: (batch) => (
-        <span className={batch.status == "1" ? "badge badge-success" : "badge badge-error"}>{batch.status === 1 ?"Active":"In Active"}</span>
-      ),
-    },
+        colname: "File",
+        sortable: false,
+        className: "",
+        data: "filelink",
+        render: (batch) => <a className="cursor-pointer" target="_blank" href={process.env.REACT_APP_IMAGE + batch.filelink}><FaRegFileAlt size={24} color="#31ABEB" /></a>,
+      },
     {
       colname: "Action",
       sortable: true,
@@ -34,7 +32,7 @@ const Category = () => {
   ];
   const handleEdit =(e)=>{
     // const dataGet = {file:e.profile,...e}
-    navigate(`/category/${e._id}`)
+    navigate(`/materialLink/${e._id}`)
     
     }
   const handleRowSelect = (data) => {
@@ -45,17 +43,17 @@ const Category = () => {
   return (
     <div className="">
       <BatchComponent
-        title="Category Overview"
+        title="Material Link"
         apiUrl={apiUrl}
         config={config}
         onClickRow={handleRowSelect}
         buttonProp={{
-          onClick: () => navigate("/category/create"),
-          title: "Category",
+          onClick: () => navigate("/materialLink/create"),
+          title: "Material",
         }}
       />
     </div>
   );
 };
 
-export default Category;
+export default MaterialLink;

@@ -1,14 +1,15 @@
 import React from "react";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { FaGem } from "react-icons/fa";
-import { LiaBattleNet } from "react-icons/lia";
+import { LiaBattleNet, LiaChalkboardTeacherSolid } from "react-icons/lia";
 import { useNavigate } from "react-router-dom"; // Import the hook
-import { PiStudent } from "react-icons/pi";
+import { PiFileVideo, PiStudent } from "react-icons/pi";
 import { TbCategory } from "react-icons/tb";
 import { GoDuplicate } from "react-icons/go";
 import { SlBookOpen } from "react-icons/sl";
 import { SiGoogleclassroom } from "react-icons/si";
 import { MdOutlineAssignmentTurnedIn } from "react-icons/md";
+import { GrDocumentPdf } from "react-icons/gr";
 
 const SidebarComponent = ({ collapsed }) => {
   const navigate = useNavigate(); // Initialize navigate
@@ -74,7 +75,28 @@ const SidebarComponent = ({ collapsed }) => {
           icon={<MdOutlineAssignmentTurnedIn color="#31ABEB" className="" />}
           onClick={() => navigate("/assessment")}
         >
-          My Class
+         Assessment
+        </MenuItem>
+        <MenuItem
+          className="dark:text-white text-gray-500"
+          icon={<GrDocumentPdf color="#31ABEB" className="" />}
+          onClick={() => navigate("/materialLink")}
+        >
+         Material Link
+        </MenuItem>
+        <MenuItem
+          className="dark:text-white text-gray-500"
+          icon={<LiaChalkboardTeacherSolid color="#31ABEB" className="" />}
+          onClick={() => navigate("/instructor")}
+        >
+          Instructor
+        </MenuItem> 
+        <MenuItem
+          className="dark:text-white text-gray-500"
+          icon={<PiFileVideo color="#31ABEB" className="" />}
+          onClick={() => navigate("/recording")}
+        >
+          My Recording
         </MenuItem>
       </Menu>
     </Sidebar>

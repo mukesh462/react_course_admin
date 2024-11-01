@@ -9,7 +9,7 @@ import {
   } from "react-icons/fa";
   import { IoAddCircleOutline } from "react-icons/io5";
   
-  export default function MyClass() {
+  export default function MyClassCard() {
     return (
       <div className="">
         <div className="min-h-[60vh] flex items-center justify-center p-4">

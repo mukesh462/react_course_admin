@@ -9,15 +9,44 @@
     border-radius: 0.5rem; /* Rounded corners */
   }
 
+
+@layer utilities{
+  .badge {
+    @apply inline-flex items-center  text-sm font-semibold rounded px-2 py-2;
+  }
+  
+  .badge-success {
+    @apply text-gray-800 bg-green-100;
+  }
+  
+  .badge-warning {
+    @apply text-yellow-800 bg-yellow-200;
+  }
+  
+  .badge-error {
+    @apply text-red-800 bg-red-200;
+  }
+  
+  .badge-info {
+    @apply text-blue-800 bg-blue-200;
+  }
   .btn {
-    @apply font-bold py-2 px-4 rounded;
+    @apply inline-flex items-center p-2 rounded justify-center text-sm font-semibold text-white  focus:outline-none focus:ring-2 focus:ring-offset-2;
   }
-  .btn-blue {
-    @apply bg-blue-500 text-white;
+
+  .btn-primary {
+    @apply bg-primary hover:bg-blue-600 focus:ring-blue-500;
   }
-  .btn-blue:hover {
-    @apply bg-blue-700;
+
+  .btn-secondary {
+    @apply bg-secondary hover:bg-gray-600 focus:ring-gray-500;
   }
-  .btn-sm{
-    @apply px-3 py-2
+
+  .btn-danger {
+    @apply bg-danger hover:bg-red-600 focus:ring-red-500;
   }
+
+  .btn-success {
+    @apply bg-success hover:bg-green-600 focus:ring-green-500;
+  }
+}

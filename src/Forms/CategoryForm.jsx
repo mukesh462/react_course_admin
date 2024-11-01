@@ -1,29 +1,66 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import useApi from '../components/useApi';
+import { useNavigate, useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { IoChevronBackCircleOutline } from 'react-icons/io5';
 
 const validationSchema = Yup.object().shape({
-  categoryName: Yup.string()
+  category_name: Yup.string()
     .required('Category Name is required')
     .min(2, 'Category Name must be at least 2 characters long'),
-  status: Yup.boolean().required('Status is required'),
+  status: Yup.string().required('Status is required'),
 });
 
 const CategoryForm = () => {
-  const [isActive, setIsActive] = useState(false);
+  const { id } = useParams();
+  const [isActive, setIsActive] = useState(true);
+  const { request } = useApi();
+  const navigate = useNavigate();
+  const [data, setData] = useState({
+    category_name: "",
+    status: "1",
+  });
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await request("get", "category/" + id);
+      if (response.status) {
+        const {data} = response;
+        setIsActive(data.status == 1? true : false)
+        setData(data);
+      }
+    };
+    if (id !== undefined) {
+      fetchData();
+    }
+  }, [id]);
+  const submitForm = async (values, { setSubmitting, setErrors }) => {
+    try {
+      const postUrl = id ? "category/update/" + id:"category/create";
+      await request("post", postUrl, values );
+      toast.success("Success");
+      navigate('/category')
+      
+    } catch (error) {
+      setErrors({ submit: error.message });
+    } finally {
+      setSubmitting(false);
+    }
+  };
   return (
-    <div className="max-w-lg mx-auto mt-10 p-5 border rounded shadow bg-white">
+    <div className="">
+        <div className="mt-5">
+        <button onClick={()=> navigate('/category')} className="btn btn-secondary flex gap-2 items-center justify-center"><IoChevronBackCircleOutline size={20} /> Back</button>
+      </div>
+      <div className="max-w-lg mx-auto mt-10 p-5 border rounded shadow bg-white">
       
       <Formik
-        initialValues={{ categoryName: '', status: false }}
+        initialValues={data}
         validationSchema={validationSchema}
-        onSubmit={(values, { setSubmitting }) => {
-          setTimeout(() => {
-            console.log('Form Data', values);
-            setSubmitting(false);
-          }, 400);
-        }}
+        enableReinitialize={true}
+        onSubmit={submitForm}
       >
         {({ isSubmitting, setFieldValue }) => (
           <Form>
@@ -33,10 +70,10 @@ const CategoryForm = () => {
               </label>
               <Field
                 type="text"
-                name="categoryName"
+                name="category_name"
                 className="mt-2 block w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
               />
-              <ErrorMessage name="categoryName" component="div" className="text-red-600 text-sm mt-1" />
+              <ErrorMessage name="category_name" component="div" className="text-red-600 text-sm mt-1" />
             </div>
 
             <div className="mb-6">
@@ -54,7 +91,7 @@ const CategoryForm = () => {
                     checked={isActive}
                     onChange={(e) => {
                       setIsActive(e.target.checked);
-                      setFieldValue('status', e.target.checked);
+                      setFieldValue('status', e.target.checked ? 1 : 0);
                     }}
                   />
                   <label
@@ -86,6 +123,8 @@ const CategoryForm = () => {
         )}
       </Formik>
     </div>
+    </div>
+  
   );
 };
 

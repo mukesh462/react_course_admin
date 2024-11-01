@@ -1,4 +1,3 @@
-// BatchComponent.jsx
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/Card";
 import {
@@ -25,17 +24,22 @@ const BatchComponent = ({
   const [itemsPerPage] = useState(5);
   const [totalItems, setTotalItems] = useState(0);
   const [sortConfig, setSortConfig] = useState({
-    key: "id",
+    key: "name", // default sorting key
     direction: "ascending",
   });
 
   const fetchBatches = async (page = 0) => {
     try {
-      const response = await axios.get(
-        `${apiUrl}?limit=${itemsPerPage}&skip=${currentPage}`
-      );
-      setBatches(response.data.products); // Adjust based on your API response structure
-      setTotalItems(response.data.total); // Adjust based on your API response structure
+      const baseUrl = process.env.REACT_APP_URL
+      const response = await axios.post(baseUrl+apiUrl, {
+        limit: itemsPerPage,
+        page: page + 1, // API expects page numbers to start from 1
+      });
+
+      if (response.data.status) {
+        setBatches(response.data.data); // Get the array from the 'data' key
+        setTotalItems(response.data.paginate.total_count); // Use the 'total_count' from 'paginate'
+      }
     } catch (error) {
       console.error("Error fetching batch data:", error);
     }
@@ -58,6 +62,7 @@ const BatchComponent = ({
       return sortConfig.direction === "ascending" ? 1 : -1;
     return 0;
   });
+
   const handleSort = (key) => {
     let direction = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
@@ -66,7 +71,6 @@ const BatchComponent = ({
     setSortConfig({ key, direction });
   };
 
-  // Handle pagination click
   const handlePageClick = (data) => {
     setCurrentPage(data.selected);
   };
@@ -109,7 +113,7 @@ const BatchComponent = ({
                 {sortedBatches.length > 0 ? (
                   sortedBatches.map((batch) => (
                     <TableRow
-                      key={batch.id}
+                      key={batch._id} // Use the _id for uniqueness
                       className="hover:bg-[#31ABEB]/5 transition-colors"
                       onClick={() => handleRowClick(batch)}
                     >
@@ -140,7 +144,7 @@ const BatchComponent = ({
               nextLabel={"Next"}
               breakLabel={"..."}
               forcePage={currentPage}
-              pageCount={Math.ceil(totalItems / itemsPerPage)} // Adjust to reflect the actual total pages
+              pageCount={Math.ceil(totalItems / itemsPerPage)}
               marginPagesDisplayed={1}
               pageRangeDisplayed={2}
               onPageChange={handlePageClick}
