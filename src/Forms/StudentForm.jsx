@@ -22,10 +22,9 @@ const MyStudentForm = () => {
     profile: null,
     batch_id: "",
     isAdmin: "",
-    dateofjoining: "2024-10-20T00:00:00.000Z",
+    dateofjoining: new Date().toUTCString(),
     status: 1,
   });
-  const [batch, setbatch] = useState([]);
   const validationSchema = Yup.object().shape({
     name: Yup.string()
       .required("Name is required")
@@ -42,6 +41,7 @@ const MyStudentForm = () => {
     batch_id: Yup.string().required("Batch is required"),
     dateofjoining: Yup.string().required("DOJ is required"),
   });
+  const [batch, setbatch] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {

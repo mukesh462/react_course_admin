@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/themes/material_blue.css";
@@ -6,6 +6,11 @@ import Switch from "react-switch";
 import "flatpickr/dist/themes/material_blue.css";
 import * as Yup from "yup";
 import SelectSearch from "../components/SelectSearch";
+import { useNavigate, useParams } from "react-router-dom";
+import useApi from "../components/useApi";
+import toast from "react-hot-toast";
+import Select from "../components/Select";
+import NormalSelect from "../components/Select";
 
 const instructors = [
   { id: 1, name: "John Doe" },
@@ -34,33 +39,112 @@ const validationSchema = Yup.object().shape({
 });
 const ClassForm = () => {
   const [classType, setClassType] = useState(true); // Switch between individual and batch
+  const { id } = useParams();
+  const [isActive, setIsActive] = useState(true);
+  const { request } = useApi();
+  const [studentData, setstudentData] = useState([]);
+  const navigate = useNavigate();
+  const [data, setData] = useState({
+    topic_name: "",
+    description: "",
+    short_description: "",
+    date: new Date(),
+    start_time: "",
+    end_time: "",
+    instructor_id: "",
+    class_type: true,
+    zoomlink: "",
+    recordingurl: "",
+    batch_or_student_id: "",
+    materials: [], // Start with an empty materials array
+  });
+  const [batch, setbatch] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await request("get", "student/" + id);
+      if (response.status) {
+        const { data } = response;
+
+        setData(data);
+      }
+    };
+    if (id !== undefined) {
+      fetchData();
+    }
+    getBatch();
+  }, [id]);
+  const getBatch = async () => {
+    try {
+      const [response, stu] = await Promise.all([
+        request("get", "batch/getAllBatchData"),
+        request("get", "student/allStudent"),
+      ]);
+
+      if (response.status) {
+        setbatch(
+          response.data.map((e) => ({
+            label: e.batch_name,
+            value: e._id,
+          }))
+        );
+      }
+
+      if (stu.status) {
+        setstudentData(
+          stu.data.map((e) => ({
+            label: e.name,
+            value: e._id,
+          }))
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching batch or student data:", error);
+    }
+  };
+
+  const submitForm = async (values, { setSubmitting, setErrors }) => {
+    const sendpost ={
+      ...values,
+      batch_or_student_id: values.batch_or_student_id?.value,
+      materials: values.materials.map(e=> e.value),
+    }
+    console.log(sendpost)
+    // try {
+    //   const postUrl = id ? "student/update/" + id : "student/create";
+    //   const res = await request(
+    //     "post",
+    //     postUrl,
+    //     {
+    //       ...values,
+    //       batch_or_student_id: values.batch_or_student_id?.value,
+    //       materials: values.material.map(e=> e.value),
+    //     },
+    //     {
+    //       headers: {
+    //         "Content-Type": "multipart/form-data",
+    //       },
+    //     }
+    //   );
+    //   if (res.status) {
+    //     toast.success(res.message);
+    //     navigate("/student");
+    //   } else {
+    //     toast.success(res.message);
+    //   }
+    // } catch (error) {
+    //   setErrors({ submit: error.message });
+    // } finally {
+    //   setSubmitting(false);
+    // }
+  };
 
   return (
     <div className="max-w-5xl mx-auto mt-10 p-5 border rounded shadow bg-white">
       <h1 className="text-xl font-semibold mb-4">Class Form</h1>
       <Formik
-        initialValues={{
-          topic_name: "",
-          description: "",
-          short_description: "",
-          date: null,
-          start_time: "",
-          end_time: "",
-          instructor_id: "",
-          class_type: true,
-          zoomlink: "",
-          recordingurl: "",
-          batch_or_student_id: "",
-          materials: [], // Start with an empty materials array
-        }}
-        validationSchema={validationSchema}
-        onSubmit={(values, { setSubmitting }) => {
-          console.log("Form Data", values);
-          setTimeout(() => {
-            setSubmitting(false);
-            alert("Form submitted successfully!");
-          }, 400);
-        }}
+        initialValues={data}
+        // validationSchema={validationSchema}
+        onSubmit={submitForm}
       >
         {({ isSubmitting, setFieldValue, values }) => {
           return (
@@ -183,7 +267,8 @@ const ClassForm = () => {
                       checked={classType}
                       onChange={(e) => {
                         setClassType(e);
-                        setFieldValue("class_type", e);
+                        setFieldValue("class_type", e ? 1:2);
+                        setFieldValue("batch_or_student_id", "");
                       }}
                       offColor="#888"
                       onColor="#31ABEB"
@@ -203,25 +288,17 @@ const ClassForm = () => {
                     <span className="text-red-500">*</span>
                   </label>
                   <Field
-                    as="select"
                     name="batch_or_student_id"
-                    className="mt-2 block w-full border rounded-md p-2"
-                  >
-                    <option value="">
-                      Select {classType ? "Batch" : "Student"}
-                    </option>
-                    {classType
-                      ? batches.map((batch) => (
-                          <option key={batch.id} value={batch.id}>
-                            {batch.name}
-                          </option>
-                        ))
-                      : students.map((student) => (
-                          <option key={student.id} value={student.id}>
-                            {student.name}
-                          </option>
-                        ))}
-                  </Field>
+                    component={NormalSelect}
+                    onChange={(selected) => {
+                      console.log("Batch or Student ID selected:", selected);
+                      setFieldValue("batch_or_student_id", selected || ""); // Default to empty string if undefined
+                    }}
+                    value={values.batch_or_student_id}
+                    options={classType ? batch : studentData}
+                    placeholder="Select option"
+                  />
+
                   <ErrorMessage
                     name="batch_or_student_id"
                     component="div"
