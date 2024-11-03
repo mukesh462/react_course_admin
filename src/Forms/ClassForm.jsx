@@ -12,10 +12,10 @@ import toast from "react-hot-toast";
 import Select from "../components/Select";
 import NormalSelect from "../components/Select";
 
-const instructors = [
-  { id: 1, name: "John Doe" },
-  { id: 2, name: "Jane Smith" },
-];
+// const instructors = [
+//   { id: 1, name: "John Doe" },
+//   { id: 2, name: "Jane Smith" },
+// ];
 
 const batches = [
   { id: 1, name: "Batch A" },
@@ -43,6 +43,7 @@ const ClassForm = () => {
   const [isActive, setIsActive] = useState(true);
   const { request } = useApi();
   const [studentData, setstudentData] = useState([]);
+  const [instructors, setInstructor] = useState([]);
   const navigate = useNavigate();
   const [data, setData] = useState({
     topic_name: "",
@@ -73,6 +74,19 @@ const ClassForm = () => {
     }
     getBatch();
   }, [id]);
+  useEffect(()=>{
+    getInstructors();
+  },[]);
+
+  const getInstructors = async ()=>{
+      const response = await request("get", "instructor/get-all-instructor");
+      if (response.status) {
+        const { data } = response;
+  
+        setInstructor(data);
+      }
+  }
+  console.log(instructors); 
   const getBatch = async () => {
     try {
       const [response, stu] = await Promise.all([
@@ -109,33 +123,24 @@ const ClassForm = () => {
       materials: values.materials.map(e=> e.value),
     }
     console.log(sendpost)
-    // try {
-    //   const postUrl = id ? "student/update/" + id : "student/create";
-    //   const res = await request(
-    //     "post",
-    //     postUrl,
-    //     {
-    //       ...values,
-    //       batch_or_student_id: values.batch_or_student_id?.value,
-    //       materials: values.material.map(e=> e.value),
-    //     },
-    //     {
-    //       headers: {
-    //         "Content-Type": "multipart/form-data",
-    //       },
-    //     }
-    //   );
-    //   if (res.status) {
-    //     toast.success(res.message);
-    //     navigate("/student");
-    //   } else {
-    //     toast.success(res.message);
-    //   }
-    // } catch (error) {
-    //   setErrors({ submit: error.message });
-    // } finally {
-    //   setSubmitting(false);
-    // }
+    try {
+      const postUrl = id ? "myclass/update/" + id : "myclass/create";
+      const res = await request(
+        "post",
+        postUrl,
+        sendpost,
+      );
+      if (res.status) {
+        toast.success(res.message);
+        navigate("/class");
+      } else {
+        toast.success(res.message);
+      }
+    } catch (error) {
+      setErrors({ submit: error.message });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -198,7 +203,7 @@ const ClassForm = () => {
                   >
                     <option value="">Select Instructor</option>
                     {instructors.map((instructor) => (
-                      <option key={instructor.id} value={instructor.id}>
+                      <option key={instructor.id} value={instructor._id}>
                         {instructor.name}
                       </option>
                     ))}
