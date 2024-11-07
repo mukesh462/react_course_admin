@@ -45,6 +45,8 @@ function App() {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/class" element={<MyClass />} />
                     <Route path="/class/create" element={<ClassForm />} />
+                    <Route path="/class/:id" element={<ClassForm />} />
+
                     <Route path="/batch" element={<Batch />} />
                     <Route path="/student" element={<Student />} />
                     <Route path="/student/create" element={<StudentForm />} />

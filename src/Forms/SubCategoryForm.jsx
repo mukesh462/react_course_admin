@@ -74,7 +74,7 @@ const SubCategoryForm = () => {
                 name="category_id"
                 className="mt-2 block w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
               >
-                <option value="">Select a category</option>
+                <option value="">Select a Category</option>
             {
               category.map((e)=>{
                 return <option value={e._id}>{e.category_name}</option>

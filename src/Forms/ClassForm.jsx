@@ -62,11 +62,11 @@ const ClassForm = () => {
   const [batch, setbatch] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      const response = await request("get", "student/" + id);
+      const response = await request("get", "myclass/" + id);
       if (response.status) {
         const { data } = response;
-
-        setData(data);
+        setData({ class_type: data.class_type, ...data });
+        setClassType(data.class_type == 1);
       }
     };
     if (id !== undefined) {
@@ -74,62 +74,80 @@ const ClassForm = () => {
     }
     getBatch();
   }, [id]);
-  useEffect(()=>{
+  useEffect(() => {
     getInstructors();
-  },[]);
+  }, []);
 
-  const getInstructors = async ()=>{
-      const response = await request("get", "instructor/get-all-instructor");
-      if (response.status) {
-        const { data } = response;
-  
-        setInstructor(data);
-      }
-  }
-  console.log(instructors); 
+  const getInstructors = async () => {
+    const response = await request("get", "instructor/get-all-instructor");
+    if (response.status) {
+      const { data } = response;
+
+      setInstructor(data);
+    }
+  };
+  console.log(instructors);
   const getBatch = async () => {
     try {
-      const [response, stu] = await Promise.all([
+      const [batchResponse, studentResponse] = await Promise.all([
         request("get", "batch/getAllBatchData"),
         request("get", "student/allStudent"),
       ]);
 
-      if (response.status) {
-        setbatch(
-          response.data.map((e) => ({
-            label: e.batch_name,
-            value: e._id,
-          }))
-        );
+      if (batchResponse.status) {
+        const batchOptions = batchResponse.data.map((batch) => {
+          if (id !== undefined && batch._id === data.batch_or_student_id) {
+            setData((prevData) => ({
+              ...prevData,
+              batch_or_student_id: {
+                label: batch.batch_name,
+                value: batch._id,
+              },
+            }));
+          }
+          return {
+            label: batch.batch_name,
+            value: batch._id,
+          };
+        });
+        setbatch(batchOptions);
       }
 
-      if (stu.status) {
-        setstudentData(
-          stu.data.map((e) => ({
-            label: e.name,
-            value: e._id,
-          }))
-        );
+      if (studentResponse.status) {
+        const studentOptions = studentResponse.data.map((student) => {
+          if (id !== undefined && student._id === data.batch_or_student_id) {
+            setData((prevData) => ({
+              ...prevData,
+              batch_or_student_id: {
+                label: student.name,
+                value: student._id,
+              },
+            }));
+          }
+          return {
+            label: student.name,
+            value: student._id,
+          };
+        });
+        setstudentData(studentOptions);
       }
     } catch (error) {
       console.error("Error fetching batch or student data:", error);
     }
   };
 
+  // console.log(studentData,'stt')
+  // console.log(data)
   const submitForm = async (values, { setSubmitting, setErrors }) => {
-    const sendpost ={
+    const sendpost = {
       ...values,
       batch_or_student_id: values.batch_or_student_id?.value,
-      materials: values.materials.map(e=> e.value),
-    }
-    console.log(sendpost)
+      materials: values.materials.map((e) => e.value),
+    };
+    console.log(sendpost);
     try {
       const postUrl = id ? "myclass/update/" + id : "myclass/create";
-      const res = await request(
-        "post",
-        postUrl,
-        sendpost,
-      );
+      const res = await request("post", postUrl, sendpost);
       if (res.status) {
         toast.success(res.message);
         navigate("/class");
@@ -148,6 +166,7 @@ const ClassForm = () => {
       <h1 className="text-xl font-semibold mb-4">Class Form</h1>
       <Formik
         initialValues={data}
+        enableReinitialize={true}
         // validationSchema={validationSchema}
         onSubmit={submitForm}
       >
@@ -200,6 +219,7 @@ const ClassForm = () => {
                     as="select"
                     name="instructor_id"
                     className="mt-2 block w-full border rounded-md p-2"
+                    value={values.instructor_id}
                   >
                     <option value="">Select Instructor</option>
                     {instructors.map((instructor) => (
@@ -272,7 +292,7 @@ const ClassForm = () => {
                       checked={classType}
                       onChange={(e) => {
                         setClassType(e);
-                        setFieldValue("class_type", e ? 1:2);
+                        setFieldValue("class_type", e ? 1 : 2);
                         setFieldValue("batch_or_student_id", "");
                       }}
                       offColor="#888"
