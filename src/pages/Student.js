@@ -47,7 +47,7 @@ const navigate = useNavigate();
       className: "capitalize",
       data: "status",
       render: (batch) => (
-        <span className={batch.status == 1 ? "badge badge-success" : "badge badge-error"}>{batch.status == 1 ?"Active":"In Active"}</span>
+        <span className={batch.status === 1 ? "badge badge-success" : "badge badge-error"}>{batch.status === 1 ?"Active":"In Active"}</span>
       ),
     },
     {

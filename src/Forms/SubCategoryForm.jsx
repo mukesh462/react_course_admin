@@ -26,7 +26,7 @@ const SubCategoryForm = () => {
       const response = await request("get", "subcategory/" + id);
       if (response.status) {
       
-        setIsActive(response.data.status == "1"? true : false)
+        setIsActive(response.data.status === 1? true : false)
         setData(response.data);
       }
     };

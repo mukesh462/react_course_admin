@@ -38,7 +38,7 @@ const CourseForm = () => {
       const response = await request("get", "course/" + id);
       if (response.status) {
         getSubCategory(response.data.category_id)
-        setIsActive(response.data.status == "1"? true : false)
+        setIsActive(response.data.status === 1? true : false)
         setData(response.data);
       }
     };

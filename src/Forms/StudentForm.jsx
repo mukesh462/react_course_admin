@@ -203,7 +203,7 @@ const MyStudentForm = () => {
                   <label className="block font-bold">isAdmin </label>
                   <div className="flex items-center mt-2">
                     <Switch
-                      checked={values.isAdmin ==1 ?true :false}
+                      checked={values.isAdmin ===1 ?true :false}
                       onChange={(e) => {
                         setFieldValue("isAdmin", e ? 1 : 0);
                       }}
@@ -217,7 +217,7 @@ const MyStudentForm = () => {
                   <label className="block font-bold">Status </label>
                   <div className="flex items-center mt-2">
                     <Switch
-                      checked={values.status == 1 ? true :false}
+                      checked={values.status === 1 ? true :false}
                       onChange={(e) => {
                         setFieldValue("status", e ? 1 : 0);
                       }}

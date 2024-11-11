@@ -66,7 +66,7 @@ const ClassForm = () => {
       if (response.status) {
         const { data } = response;
         setData({ class_type: data.class_type, ...data });
-        setClassType(data.class_type == 1);
+        setClassType(data.class_type === 1);
       }
     };
     if (id !== undefined) {

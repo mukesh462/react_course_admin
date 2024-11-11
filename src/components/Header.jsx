@@ -15,7 +15,7 @@ const Header = ({ toggleSidebar }) => {
           <FaBars />
         </button>
 
-        <h1 className="text-2xl font-bold">Admin Panel</h1>
+        <h1 className="text-2xl font-bold">GrowTogether</h1>
         <div>
         {/* <ThemeToggle /> */}
         <Example/>
