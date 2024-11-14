@@ -1,14 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../components/Model.js";
-import VideoCard  from "../components/VideoCard";
-
-
+import VideoCard from "../components/VideoCard";
+import useApi from "../components/useApi.js";
+import toast from "react-hot-toast";
+import moment from "moment/moment.js";
+import VideoPlayer from "../components/Videoplayer.jsx";
 
 export default function MyRecording() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addSrc, setaddSrc] = useState(null);
   const openModal = () => setIsModalOpen(true);
+  const [data, setData] = useState([]);
   const closeModal = () => setIsModalOpen(false);
+  const { request } = useApi();
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await request("post", "myclass/myrecords", {
+        user_id: "67245999e2d1bc940c6c037a",
+      });
+      if (response.status) {
+        setData(response.data);
+      } else {
+        toast.error(response.message);
+      }
+      console.log(response.data, "dd");
+    };
+    fetchData();
+  }, []);
+
   const videos = [
     {
       id: 1,
@@ -66,37 +85,57 @@ export default function MyRecording() {
     },
   ];
   const handleClick = (e) => {
-    openModal()
+    openModal();
+    setaddSrc(e);
   };
+ 
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-12 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4">
         <h1 className="mb-8 text-center text-4xl font-extrabold text-gray-900 dark:text-white">
-          Trending{" "}
+          My{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
-            Tech Talks
+            Recording
           </span>
         </h1>
-        <Modal isOpen={isModalOpen} closeModal={closeModal} title="Modal Title">
-          <p>This is a reusable modal component.</p>
-        </Modal>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {videos.map((video) => (
-            <VideoCard
-              key={video.id}
-              title={video.title}
-              thumbnail={video.thumbnail}
-              duration={video.duration}
-              views={video.views}
-              onClick={(e) => handleClick(e)}
-              date={video.date}
-              author={video.author}
-              src={video.src}
-            />
-          ))}
-        </div>
+        {/* <Modal isOpen={isModalOpen} closeModal={closeModal} title=""> */}
+        {addSrc ? (
+          <div>
+            <div className="">
+              <button
+                className="bg-gray-400 text-white p-2 rounded-lg"
+                onClick={() => setaddSrc(null)}
+              >
+                Back
+              </button>
+            </div>
+            <div className="flex justify-center items-center h-vh w-screen">
+              <VideoPlayer
+                src={addSrc?.recordingUrl}
+                poster="https://placehold.co/400"
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {data.map((video) => (
+              <VideoCard
+                key={video._id}
+                title={video?.topic_name}
+                thumbnail={video.thumbnail}
+                duration={"1:00:00"}
+                views={video.views}
+                onClick={(e) => handleClick(video)}
+                date={moment(video.date).format("DD/MM/YYYY")}
+                author={video.author}
+                src={video?.recordingUrl}
+              />
+            ))}
+          </div>
+        )}
 
-       
+        {/* </Modal> */}
       </div>
     </div>
   );

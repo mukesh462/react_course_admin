@@ -3,7 +3,7 @@ import { BsClock } from "react-icons/bs";
 
 
 
-export default function VideoCard({ title, thumbnail, duration, views, date,onClick,src }) {
+export default function VideoCard({ title, thumbnail = "https://placehold.co/400", duration, views, date,onClick,src }) {
   return (
     <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 p-1 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl dark:from-gray-800 dark:to-gray-900">
       <div className="relative aspect-video overflow-hidden rounded-lg">
@@ -28,7 +28,7 @@ export default function VideoCard({ title, thumbnail, duration, views, date,onCl
         <div className="mt-3 flex items-center justify-between">
           <div className="flex items-center space-x-1 text-sm font-medium text-purple-600 dark:text-purple-400">
             <BiPlay className="h-4 w-4" />
-            <span>{views.toLocaleString()} views</span>
+            <span>100K views</span>
           </div>
           <button onClick={onClick} className="rounded-full bg-purple-600 px-4 py-1 text-xs font-semibold text-white transition-colors hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600">
             Watch Now

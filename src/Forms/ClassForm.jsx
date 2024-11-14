@@ -42,8 +42,7 @@ const ClassForm = () => {
   const { id } = useParams();
   const [isActive, setIsActive] = useState(true);
   const { request } = useApi();
-  const [studentData, setstudentData] = useState([]);
-  const [instructors, setInstructor] = useState([]);
+
   const navigate = useNavigate();
   const [data, setData] = useState({
     topic_name: "",
@@ -54,40 +53,56 @@ const ClassForm = () => {
     end_time: "",
     instructor_id: "",
     class_type: true,
-    zoomlink: "",
-    recordingurl: "",
+    zoomLink: "",
+    recordingUrl: "",
     batch_or_student_id: "",
     materials: [], // Start with an empty materials array
   });
-  const [batch, setbatch] = useState([]);
+  const [batch, setBatch] = useState([]);
+  const [studentData, setStudentData] = useState([]);
+  const [instructors, setInstructors] = useState([]);
+
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await request("get", "myclass/" + id);
-      if (response.status) {
-        const { data } = response;
-        setData({ class_type: data.class_type, ...data });
-        setClassType(data.class_type === 1);
+    // Fetch class data and then fetch batch and student data
+    const initializeData = async () => {
+      if (id) {
+        await fetchData();
+        await getBatchAndStudentData();
       }
+      getInstructors();
     };
-    if (id !== undefined) {
-      fetchData();
-    }
-    getBatch();
+    initializeData();
   }, [id]);
-  useEffect(() => {
-    getInstructors();
-  }, []);
 
-  const getInstructors = async () => {
-    const response = await request("get", "instructor/get-all-instructor");
-    if (response.status) {
-      const { data } = response;
-
-      setInstructor(data);
+  const fetchData = async () => {
+    try {
+      const response = await request("get", `myclass/${id}`);
+      if (response.status) {
+        const classData = response.data;
+        setData((prevData) => ({
+          ...prevData,
+          ...classData,
+          class_type: classData.class_type,
+        }));
+        setClassType(classData.class_type === 1);
+      }
+    } catch (error) {
+      console.error("Error fetching dclass data:", error);
     }
   };
-  console.log(instructors);
-  const getBatch = async () => {
+
+  const getInstructors = async () => {
+    try {
+      const response = await request("get", "instructor/get-all-instructor");
+      if (response.status) {
+        setInstructors(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching instructors:", error);
+    }
+  };
+
+  const getBatchAndStudentData = async () => {
     try {
       const [batchResponse, studentResponse] = await Promise.all([
         request("get", "batch/getAllBatchData"),
@@ -95,49 +110,72 @@ const ClassForm = () => {
       ]);
 
       if (batchResponse.status) {
-        const batchOptions = batchResponse.data.map((batch) => {
-          if (id !== undefined && batch._id === data.batch_or_student_id) {
+        const batchOptions = batchResponse.data.map((batch) => ({
+          label: batch.batch_name,
+          value: batch._id,
+        }));
+        setBatch(batchOptions);
+
+        if (data.batch_or_student_id) {
+          const selectedBatch = batchOptions.find(
+            (batch) => batch.value === data.batch_or_student_id
+          );
+          if (selectedBatch) {
             setData((prevData) => ({
               ...prevData,
-              batch_or_student_id: {
-                label: batch.batch_name,
-                value: batch._id,
-              },
+              batch_or_student_id: selectedBatch,
             }));
           }
-          return {
-            label: batch.batch_name,
-            value: batch._id,
-          };
-        });
-        setbatch(batchOptions);
+        }
       }
 
       if (studentResponse.status) {
-        const studentOptions = studentResponse.data.map((student) => {
-          if (id !== undefined && student._id === data.batch_or_student_id) {
+        const studentOptions = studentResponse.data.map((student) => ({
+          label: student.name,
+          value: student._id,
+        }));
+        setStudentData(studentOptions);
+
+        if (data.batch_or_student_id) {
+          const selectedStudent = studentOptions.find(
+            (student) => student.value === data.batch_or_student_id
+          );
+          if (selectedStudent) {
             setData((prevData) => ({
               ...prevData,
-              batch_or_student_id: {
-                label: student.name,
-                value: student._id,
-              },
+              batch_or_student_id: selectedStudent,
             }));
           }
-          return {
-            label: student.name,
-            value: student._id,
-          };
-        });
-        setstudentData(studentOptions);
+        }
       }
     } catch (error) {
       console.error("Error fetching batch or student data:", error);
     }
   };
 
-  // console.log(studentData,'stt')
-  // console.log(data)
+  console.log(data, "data");
+  useEffect(() => {
+    const updateBatchOrStudentSelection = (options, key) => {
+      if (options.length > 0 && data.batch_or_student_id) {
+        const selectedOption = options.find(
+          (option) => option.value === data.batch_or_student_id
+        );
+        if (selectedOption) {
+          setData((prevData) => ({
+            ...prevData,
+            [key]: selectedOption,
+          }));
+        }
+      }
+    };
+  
+    updateBatchOrStudentSelection(batch, "batch_or_student_id");
+    updateBatchOrStudentSelection(studentData, "batch_or_student_id");
+  
+  }, [batch, studentData, data.batch_or_student_id]);
+  
+  
+
   const submitForm = async (values, { setSubmitting, setErrors }) => {
     const sendpost = {
       ...values,
@@ -368,23 +406,23 @@ const ClassForm = () => {
               {/* Zoom Link and Recording URL */}
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <div>
-                  <label htmlFor="zoomlink" className="block font-bold">
+                  <label htmlFor="zoomLink" className="block font-bold">
                     Zoom Link
                   </label>
                   <Field
                     type="text"
-                    name="zoomlink"
+                    name="zoomLink"
                     className="mt-2 block w-full border rounded-md p-2"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="recordingurl" className="block font-bold">
+                  <label htmlFor="recordingUrl" className="block font-bold">
                     Recording URL
                   </label>
                   <Field
                     type="text"
-                    name="recordingurl"
+                    name="recordingUrl"
                     className="mt-2 block w-full border rounded-md p-2"
                   />
                 </div>
