@@ -2,8 +2,11 @@ import React from 'react';
 import { FaBars } from 'react-icons/fa'; // Import the hamburger icon
 import ThemeToggle from './ThemeToggle';
 import Example from './DropDown';
+import { useSelector } from 'react-redux';
 
 const Header = ({ toggleSidebar }) => {
+
+
   return (
     <header className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-md w-full min-w-full">
       <div className="px-6 py-2 flex justify-between items-center">

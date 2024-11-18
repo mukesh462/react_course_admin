@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import AdminLayout from "./components/AdminLayout";
 import Dashboard from "./pages/Dashboard";
 import Batch from "./pages/Batch";
@@ -25,60 +26,81 @@ import MyRecording from "./pages/MyRecording";
 import MaterialLink from "./pages/MaterialLink";
 import MaterialForm from "./Forms/MaterialForm";
 
+// PrivateRoute Component
+function PrivateRoute({ children }) {
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  return isLoggedIn ? children : <Navigate to="/login" />;
+}
+
+// Redirect Logged-in Users from Login
+function PublicRoute({ children }) {
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  return isLoggedIn ? <Navigate to="/" /> : children;
+}
+
 function App() {
   return (
     <Router>
       <div className="">
         <Routes>
-          {/* Login route outside of AdminLayout */}
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
 
-          {/* AdminLayout routes */}
           <Route
             path="*"
             element={
-              <AdminLayout>
-                <Breadcrumb />
-                <div className="content-container">
-                  <Routes>
-                    <Route path="/MyProfile" element={<MyProfile />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/class" element={<MyClass />} />
-                    <Route path="/class/create" element={<ClassForm />} />
-                    <Route path="/class/:id" element={<ClassForm />} />
+              <PrivateRoute>
+                <AdminLayout>
+                  <Breadcrumb />
+                  <div className="content-container">
+                    <Routes>
+                    <Route path="/" element={<Dashboard/>} />
 
-                    <Route path="/batch" element={<Batch />} />
-                    <Route path="/student" element={<Student />} />
-                    <Route path="/student/create" element={<StudentForm />} />
-                    <Route path="/student/:id" element={<StudentForm />} />
+                      <Route path="/MyProfile" element={<MyProfile />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/class" element={<MyClass />} />
+                      <Route path="/class/create" element={<ClassForm />} />
+                      <Route path="/class/:id" element={<ClassForm />} />
 
-                    <Route path="/category" element={<Category />} />
-                    <Route path="/category/create" element={<CategoryForm />} />
-                    <Route path="/category/:id/" element={<CategoryForm />} />
+                      <Route path="/batch" element={<Batch />} />
+                      <Route path="/student" element={<Student />} />
+                      <Route path="/student/create" element={<StudentForm />} />
+                      <Route path="/student/:id" element={<StudentForm />} />
 
-                    <Route path="/batch/create" element={<BatchForm />} />
-                    <Route path="/Subcategory" element={<SubCategory />} />
-                    <Route path="/Subcategory/create" element={<SubCategoryForm />} />
-                    <Route path="/Subcategory/:id" element={<SubCategoryForm />} />
+                      <Route path="/category" element={<Category />} />
+                      <Route path="/category/create" element={<CategoryForm />} />
+                      <Route path="/category/:id/" element={<CategoryForm />} />
 
-                    <Route path="/course" element={<Course />} />
-                    <Route path="/course/create" element={<CourseForm />} />
-                    <Route path="/course/:id" element={<CourseForm />} />
+                      <Route path="/batch/create" element={<BatchForm />} />
+                      <Route path="/Subcategory" element={<SubCategory />} />
+                      <Route path="/Subcategory/create" element={<SubCategoryForm />} />
+                      <Route path="/Subcategory/:id" element={<SubCategoryForm />} />
 
-                    <Route path="/instructor" element={<Instructor />} />
-                    <Route path="/instructor/create" element={<InstructorForm />} />
-                    <Route path="/instructor/:id/" element={<InstructorForm />} />
+                      <Route path="/course" element={<Course />} />
+                      <Route path="/course/create" element={<CourseForm />} />
+                      <Route path="/course/:id" element={<CourseForm />} />
 
-                    <Route path="/assessment" element={<AssessMent />} />
-                    <Route path="/assessment/create" element={<AssessmentForm />} />
-                    <Route path="/recording" element={<MyRecording />} />
-                    <Route path="/batch/:id" element={<BatchForm/>} />
-                    <Route path="/materialLink" element={<MaterialLink />} />
-                    <Route path="/materialLink/create" element={<MaterialForm />} />
-                    <Route path="/materialLink/:id" element={<MaterialForm />} />
-                  </Routes>
-                </div>
-              </AdminLayout>
+                      <Route path="/instructor" element={<Instructor />} />
+                      <Route path="/instructor/create" element={<InstructorForm />} />
+                      <Route path="/instructor/:id/" element={<InstructorForm />} />
+
+                      <Route path="/assessment" element={<AssessMent />} />
+                      <Route path="/assessment/create" element={<AssessmentForm />} />
+                      <Route path="/recording" element={<MyRecording />} />
+                      <Route path="/batch/:id" element={<BatchForm />} />
+                      <Route path="/materialLink" element={<MaterialLink />} />
+                      <Route path="/materialLink/create" element={<MaterialForm />} />
+                      <Route path="/materialLink/:id" element={<MaterialForm />} />
+                    </Routes>
+                  </div>
+                </AdminLayout>
+              </PrivateRoute>
             }
           />
         </Routes>
