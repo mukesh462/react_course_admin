@@ -32,7 +32,7 @@ const BatchForm = () => {
       const response = await request("get", "batch/" + id);
       if (response.status) {
         const {data} = response;
-        setIsActive(data.status === 1? true : false)
+        setIsActive(data.status === "1"? true : false)
         setData(data);
       }
     };

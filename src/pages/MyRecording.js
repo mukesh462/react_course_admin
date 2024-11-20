@@ -5,6 +5,7 @@ import useApi from "../components/useApi.js";
 import toast from "react-hot-toast";
 import moment from "moment/moment.js";
 import VideoPlayer from "../components/Videoplayer.jsx";
+import { useSelector } from "react-redux";
 
 export default function MyRecording() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,10 +14,12 @@ export default function MyRecording() {
   const [data, setData] = useState([]);
   const closeModal = () => setIsModalOpen(false);
   const { request } = useApi();
+  const isLoggedIn = useSelector((state) => state.login.user);
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await request("post", "myclass/myrecords", {
-        user_id: "67245999e2d1bc940c6c037a",
+        user_id: isLoggedIn?._id,
       });
       if (response.status) {
         setData(response.data);
@@ -118,6 +121,9 @@ export default function MyRecording() {
             </div>
           </div>
         ) : (
+         data.length == 0 ?  <div className="p-5 rounded-lg bg-white font-bold text-[#31ABEB] text-center">
+         No Record found
+       </div> :
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {data.map((video) => (
               <VideoCard

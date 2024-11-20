@@ -22,6 +22,15 @@ const navigate = useNavigate();
       data: "category_name",
     },
     {
+      colname: "Status",
+      sortable: true,
+      className: "capitalize",
+      data: "status",
+      render: (batch) => (
+        <span className={batch.status === '1' ? "badge badge-success" : "badge badge-error"}>{batch.status === '1' ?"Active":"In Active"}</span>
+      ),
+    },
+    {
       colname: "Action",
       sortable: true,
       className: "",

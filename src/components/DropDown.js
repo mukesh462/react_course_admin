@@ -16,12 +16,13 @@ function Example() {
 
   return (
     <Menu>
-      <MenuButton className={"me-10"}>
+      <MenuButton className={"me-10 flex gap-3 items-center"}>
         {data ? (
-          <img className="h-10 rounded-full" src={BaseUrl+data.profile}></img>
+          <img className="h-10 rounded-full" src={data.profile ? BaseUrl+data.profile :"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQG7WjONaOfilXR3bebrfe_zcjl58ZdAzJHYw&sz"}></img>
         ) : (
           <GoPerson className="border border-gray-800 text-4xl p-1 m-0 rounded-full hover:bg-gray-200 transition duration-150" />
         )}
+        <span className="font-bold">{data?.name}</span>
       </MenuButton>
       <MenuItems anchor="bottom " className="bg-white shadow-lg rounded-md ">
         <MenuItem>

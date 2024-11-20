@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { useSelector } from "react-redux";
 import AdminLayout from "./components/AdminLayout";
 import Dashboard from "./pages/Dashboard";
@@ -32,6 +37,7 @@ function PrivateRoute({ children }) {
   return isLoggedIn ? children : <Navigate to="/login" />;
 }
 
+
 // Redirect Logged-in Users from Login
 function PublicRoute({ children }) {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
@@ -39,6 +45,7 @@ function PublicRoute({ children }) {
 }
 
 function App() {
+  const userData = useSelector((state) => state.login.user);
   return (
     <Router>
       <div className="">
@@ -57,10 +64,11 @@ function App() {
             element={
               <PrivateRoute>
                 <AdminLayout>
-                  <Breadcrumb />
+                  {userData?.isAdmin == 1 && <Breadcrumb />}
+
                   <div className="content-container">
                     <Routes>
-                    <Route path="/" element={<Dashboard/>} />
+                      <Route path="/" element={<Dashboard />} />
 
                       <Route path="/MyProfile" element={<MyProfile />} />
                       <Route path="/dashboard" element={<Dashboard />} />
@@ -74,29 +82,53 @@ function App() {
                       <Route path="/student/:id" element={<StudentForm />} />
 
                       <Route path="/category" element={<Category />} />
-                      <Route path="/category/create" element={<CategoryForm />} />
+                      <Route
+                        path="/category/create"
+                        element={<CategoryForm />}
+                      />
                       <Route path="/category/:id/" element={<CategoryForm />} />
 
                       <Route path="/batch/create" element={<BatchForm />} />
                       <Route path="/Subcategory" element={<SubCategory />} />
-                      <Route path="/Subcategory/create" element={<SubCategoryForm />} />
-                      <Route path="/Subcategory/:id" element={<SubCategoryForm />} />
+                      <Route
+                        path="/Subcategory/create"
+                        element={<SubCategoryForm />}
+                      />
+                      <Route
+                        path="/Subcategory/:id"
+                        element={<SubCategoryForm />}
+                      />
 
                       <Route path="/course" element={<Course />} />
                       <Route path="/course/create" element={<CourseForm />} />
                       <Route path="/course/:id" element={<CourseForm />} />
 
                       <Route path="/instructor" element={<Instructor />} />
-                      <Route path="/instructor/create" element={<InstructorForm />} />
-                      <Route path="/instructor/:id/" element={<InstructorForm />} />
+                      <Route
+                        path="/instructor/create"
+                        element={<InstructorForm />}
+                      />
+                      <Route
+                        path="/instructor/:id/"
+                        element={<InstructorForm />}
+                      />
 
                       <Route path="/assessment" element={<AssessMent />} />
-                      <Route path="/assessment/create" element={<AssessmentForm />} />
+                      <Route
+                        path="/assessment/create"
+                        element={<AssessmentForm />}
+                      />
                       <Route path="/recording" element={<MyRecording />} />
                       <Route path="/batch/:id" element={<BatchForm />} />
                       <Route path="/materialLink" element={<MaterialLink />} />
-                      <Route path="/materialLink/create" element={<MaterialForm />} />
-                      <Route path="/materialLink/:id" element={<MaterialForm />} />
+                      <Route
+                        path="/materialLink/create"
+                        element={<MaterialForm />}
+                      />
+                      <Route
+                        path="/materialLink/:id"
+                        element={<MaterialForm />}
+                      />
                     </Routes>
                   </div>
                 </AdminLayout>

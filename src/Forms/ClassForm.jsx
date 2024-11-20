@@ -67,8 +67,8 @@ const ClassForm = () => {
     const initializeData = async () => {
       if (id) {
         await fetchData();
-        await getBatchAndStudentData();
       }
+      await getBatchAndStudentData();
       getInstructors();
     };
     initializeData();
@@ -153,8 +153,8 @@ const ClassForm = () => {
     }
   };
 
-  console.log(data, "data");
   useEffect(() => {
+    console.log(data, "trigger");
     const updateBatchOrStudentSelection = (options, key) => {
       if (options.length > 0 && data.batch_or_student_id) {
         const selectedOption = options.find(

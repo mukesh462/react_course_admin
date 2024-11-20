@@ -103,9 +103,9 @@ export default function MyClassCard({ data }) {
                 </button>
                 </a>
                
-                <button className="w-full bg-transparent hover:bg-gray-100 text-[#31abeb] font-semibold py-3 px-4 border border-[#31abeb] rounded-lg transition duration-300 text-sm sm:text-base">
+                {/* <button className="w-full bg-transparent hover:bg-gray-100 text-[#31abeb] font-semibold py-3 px-4 border border-[#31abeb] rounded-lg transition duration-300 text-sm sm:text-base">
                   Download Syllabus
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

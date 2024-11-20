@@ -27,6 +27,16 @@ const navigate = useNavigate();
       data: "subcategory_name",
     //   render: (batch) => <p className="badge">{batch.price}</p>,
     },
+   
+    {
+      colname: "Status",
+      sortable: true,
+      className: "capitalize",
+      data: "status",
+      render: (batch) => (
+        <span className={batch.status === '1' ? "badge badge-success" : "badge badge-error"}>{batch.status === '1' ?"Active":"In Active"}</span>
+      ),
+    },
     {
       colname: "Action",
       sortable: false,

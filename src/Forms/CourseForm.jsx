@@ -38,7 +38,7 @@ const CourseForm = () => {
       const response = await request("get", "course/" + id);
       if (response.status) {
         getSubCategory(response.data.category_id)
-        setIsActive(response.data.status === 1? true : false)
+        setIsActive(response.data.status === '1'? true : false)
         setData(response.data);
       }
     };
@@ -160,8 +160,8 @@ const CourseForm = () => {
                   type="checkbox"
                   id="switch-component"
                   name="status"
-                  checked={values.status}
-                  onChange={() => setFieldValue("status", !values.status)}
+                  checked={values.status == 1 }
+                  onChange={(e) => setFieldValue("status", e.target.checked ? 1:0)}
                   className="peer appearance-none w-11 h-5 bg-slate-100 rounded-full checked:bg-[#31ABEB] cursor-pointer transition-colors duration-300"
                 />
                 <label

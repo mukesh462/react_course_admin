@@ -5,14 +5,16 @@ import MyClassCard from "../components/MyClassCard";
 import useApi from "../components/useApi";
 import toast from "react-hot-toast";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
+import { useSelector } from "react-redux";
 
 const MyClass = () => {
   const apiUrl = "myclass/list";
   const navigate = useNavigate();
   const [classList, setClassList] = useState([]);
   const { request } = useApi();
+  const isLoggedIn = useSelector((state) => state.login.user);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [toggle, settoggle] = useState(true);
+  const [toggle, settoggle] = useState(isLoggedIn.isAdmin == 1 );
   const itemsPerPage = 1; // Number of cards to display at a time
 
   const formatDatetime = (dateString, type) => {
@@ -85,7 +87,7 @@ const MyClass = () => {
   useEffect(() => {
     const setClass = async () => {
       const response = await request("post", "myclass/myclasses", {
-        user_id: "67245999e2d1bc940c6c037a",
+        user_id: isLoggedIn?._id,
       });
       if (response.status) {
         setClassList(response.data);
@@ -110,18 +112,20 @@ const MyClass = () => {
 
   return (
     <div>
-      <button className="bg-indigo-500 text-white p-2 rounded-lg " onClick={()=> settoggle(!toggle)}>Toggle</button>
+      {/* <button className="bg-indigo-500 text-white p-2 rounded-lg " onClick={()=> settoggle(!toggle)}>Toggle</button> */}
       {toggle ? (
-        <BatchComponent
-          title="My Class"
-          apiUrl={apiUrl}
-          config={config}
-          onClickRow={handleRowSelect}
-          buttonProp={{
-            onClick: () => navigate("/class/create"),
-            title: "MyClass",
-          }}
-        />
+        <div className="mt-2">
+          <BatchComponent
+            title="My Class"
+            apiUrl={apiUrl}
+            config={config}
+            onClickRow={handleRowSelect}
+            buttonProp={{
+              onClick: () => navigate("/class/create"),
+              title: "MyClass",
+            }}
+          />
+        </div>
       ) : (
         <div className="">
           {classList.length > 1 && (
@@ -144,13 +148,17 @@ const MyClass = () => {
             </div>
           )}
 
-          <div className="flex gap-4 overflow-hidden justify-center">
+          <div className={`flex gap-4 overflow-hidden   justify-center items-center ${classList.length == 0 ? "h-[60svh]" :null}`}>
             {classList
               .slice(currentIndex, currentIndex + itemsPerPage)
               .map((item, index) => (
                 <MyClassCard key={item._id || index} data={item} />
               ))}
-            {classList.length === 0 && <div>No Classes For you Today</div>}
+            {classList.length === 0 && (
+              <div className="p-5 rounded-lg bg-white font-bold text-[#31ABEB]">
+                No Classes For you Today
+              </div>
+            )}
           </div>
         </div>
       )}
