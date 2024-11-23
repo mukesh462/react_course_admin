@@ -1,45 +1,46 @@
-import React, { useState } from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import FileUpload from '../components/FileUpload'; 
+import React, { useState } from "react";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import FileUpload from "../components/FileUpload";
+import { useSelector } from "react-redux";
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Name is required'),
-  email: Yup.string().email('Invalid email format').required('Email is required'),
-  password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-  phoneNumber: Yup.string()
-    .matches(/^[0-9]+$/, 'Phone number is not valid')
-    .min(10, 'Phone number must be at least 10 digits')
-    .required('Phone number is required'),
-//   profileImage: Yup.mixed().required('Profile image is required'),
+  name: Yup.string().required("Name is required"),
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  pwd: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  pnumber: Yup.string()
+    .matches(/^[0-9]+$/, "Phone number is not valid")
+    .min(10, "Phone number must be at least 10 digits")
+    .required("Phone number is required"),
 });
 
 const ProfileForm = () => {
   const [profileImage, setProfileImage] = useState([]);
-
+  const isLoggedIn = useSelector((state) => state.login.user);
+  
   return (
-    <div className="max-w-lg mx-auto mt-10 p-5 border rounded shadow bg-white">
-      <h1 className="text-xl font-semibold mb-4">Profile Form</h1>
+    <div className="max-w-4xl mx-auto mt-10 p-5 border rounded shadow bg-white">
+      <h1 className="text-2xl font-semibold mb-6">Profile Form</h1>
       <Formik
-        initialValues={{
-          name: '',
-          email: '',
-          password: '',
-          phoneNumber: '',
-          profileImage: null,
-        }}
+        initialValues={isLoggedIn}
         validationSchema={validationSchema}
+        enableReinitialize={true}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
-            console.log('Form Data', values);
-            console.log('Profile Image',profileImage ); 
+            console.log("Form Data", values);
+            console.log("Profile Image", profileImage);
             setSubmitting(false);
           }, 400);
         }}
       >
-        {({ isSubmitting, setFieldValue }) => (
-          <Form>
-            <div className="mb-6">
+        {({ isSubmitting, setFieldValue, values }) => (
+          <Form className="grid grid-cols-6 gap-4">
+            {/* Name */}
+            <div className="col-span-6 sm:col-span-3">
               <label htmlFor="name" className="block font-bold">
                 Name <span className="text-red-500">*</span>
               </label>
@@ -48,57 +49,83 @@ const ProfileForm = () => {
                 name="name"
                 className="mt-2 block w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
               />
-              <ErrorMessage name="name" component="div" className="text-red-600 text-sm mt-1" />
+              <ErrorMessage
+                name="name"
+                component="div"
+                className="text-red-600 text-sm mt-1"
+              />
             </div>
 
-            <div className="mb-6">
-              <label htmlFor="profileImage" className="block font-bold">
-                Profile Image <span className="text-red-500">*</span>
+            {/* Profile */}
+            <div className="col-span-6 sm:col-span-3">
+              <label htmlFor="profile" className="block font-bold">
+                Profile <span className="text-red-500">*</span>
               </label>
               <FileUpload
-                files={profileImage}
-                setFiles={setProfileImage} 
+                files={values.profile ? [values.profile] : []}
+                setFiles={(file) => setFieldValue("profile", file)}
               />
-              <ErrorMessage name="profileImage" component="div" className="text-red-600 text-sm mt-1" />
+              <ErrorMessage
+                name="profile"
+                component="div"
+                className="text-red-600 text-sm mt-1"
+              />
             </div>
 
-            <div className="mb-6">
+            {/* Email */}
+            <div className="col-span-6 sm:col-span-3">
               <label htmlFor="email" className="block font-bold">
                 Email <span className="text-red-500">*</span>
               </label>
               <Field
                 type="email"
                 name="email"
-                className="mt-2 block w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
+                disabled
+                className="mt-2 block w-full border rounded-md p-2 focus:outline-none cursor-not-allowed focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
               />
-              <ErrorMessage name="email" component="div" className="text-red-600 text-sm mt-1" />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="text-red-600 text-sm mt-1"
+              />
             </div>
 
-            <div className="mb-6">
+            {/* Password */}
+            <div className="col-span-6 sm:col-span-3">
               <label htmlFor="password" className="block font-bold">
                 Password <span className="text-red-500">*</span>
               </label>
               <Field
                 type="password"
-                name="password"
+                name="pwd"
                 className="mt-2 block w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
               />
-              <ErrorMessage name="password" component="div" className="text-red-600 text-sm mt-1" />
+              <ErrorMessage
+                name="pwd"
+                component="div"
+                className="text-red-600 text-sm mt-1"
+              />
             </div>
 
-            <div className="mb-6">
-              <label htmlFor="phoneNumber" className="block font-bold">
+            {/* Phone Number */}
+            <div className="col-span-6 sm:col-span-3">
+              <label htmlFor="pnumber" className="block font-bold">
                 Phone Number <span className="text-red-500">*</span>
               </label>
               <Field
                 type="text"
-                name="phoneNumber"
+                name="pnumber"
                 className="mt-2 block w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
               />
-              <ErrorMessage name="phoneNumber" component="div" className="text-red-600 text-sm mt-1" />
+              <ErrorMessage
+                name="pnumber"
+                component="div"
+                className="text-red-600 text-sm mt-1"
+              />
             </div>
 
-            <div className="flex justify-end mt-6">
+            {/* Buttons */}
+            <div className="col-span-6 flex justify-end mt-4">
               <button
                 type="reset"
                 className="bg-orange-400 text-white p-2 rounded-md mr-2"
@@ -108,9 +135,11 @@ const ProfileForm = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`bg-[#31ABEB] text-white p-2 rounded-md ${isSubmitting && 'opacity-50 cursor-not-allowed'}`}
+                className={`bg-[#31ABEB] text-white p-2 rounded-md ${
+                  isSubmitting && "opacity-50 cursor-not-allowed"
+                }`}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit'}
+                {isSubmitting ? "Submitting..." : "Submit"}
               </button>
             </div>
           </Form>

@@ -37,9 +37,9 @@ const AdminLayout = ({ children }) => {
         <div className={`transition-width duration-300`}>
           <SidebarComponent collapsed={collapsed} />
         </div>
-
+        {/* bg-gray-100 dark:bg-gray-800 */}
         {/* Main content */}
-        <div className="flex-grow md:p-6 sm:p-2 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 overflow-x-hidden">
+        <div className="flex-grow md:p-6 sm:p-2  text-gray-900 dark:text-gray-100 overflow-x-hidden">
           {children}
         </div>
       

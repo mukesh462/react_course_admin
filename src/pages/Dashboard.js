@@ -6,6 +6,7 @@ function Dashboard() {
       <div className="text-3xl m-2 p-5 font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
         Groww Together
       </div>
+      {/* <img src={banner} alt="" /> */}
     </div>
   )
 }

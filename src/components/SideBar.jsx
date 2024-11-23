@@ -33,7 +33,7 @@ const SidebarComponent = ({ collapsed }) => {
   const filteredItems = isLoggedIn
     ? menuItems
     : menuItems.filter(item =>
-        ["My Class", "Assessment", "My Recording"].includes(item.label)
+        ["My Class", "Assessment", "My Recording",'Material Link'].includes(item.label)
       );
 
   return (

@@ -66,14 +66,14 @@ export default function VideoPlayer({
   }, [])
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className=" flex justify-center items-center">
       {error && (
         <div className="bg-red-50 text-red-500 p-4 rounded-lg mb-4 text-center">
           {error}
         </div>
       )}
-      <div data-vjs-player>
-        <div ref={videoRef} className="video-js  vjs-theme-city " />
+      <div data-vjs-player className=''>
+        <div ref={videoRef} className="video-js md:w-[40vw]  rounded-lg  " />
       </div>
       <style jsx global>{`
         .video-js .vjs-skip-back-10,

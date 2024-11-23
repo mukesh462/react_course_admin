@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import ReactPaginate from "react-paginate";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { useSelector } from "react-redux";
 
 const BatchComponent = ({
   title = "Batch Overview",
@@ -30,8 +31,8 @@ const BatchComponent = ({
 
   const fetchBatches = async (page = 0) => {
     try {
-      const baseUrl = process.env.REACT_APP_URL
-      const response = await axios.post(baseUrl+apiUrl, {
+      const baseUrl = process.env.REACT_APP_URL;
+      const response = await axios.post(baseUrl + apiUrl, {
         limit: itemsPerPage,
         page: page + 1, // API expects page numbers to start from 1
       });
@@ -74,6 +75,8 @@ const BatchComponent = ({
   const handlePageClick = (data) => {
     setCurrentPage(data.selected);
   };
+  const data = useSelector((state) => state.login?.user);
+
 
   return (
     <div className="min-h-screen p-4 sm:p-6 md:p-8 overflow-x-auto">
@@ -83,12 +86,14 @@ const BatchComponent = ({
             {title}
           </CardTitle>
           <div className="md:flex block justify-end items-center mb-4 text-sm">
-            <button
-              className="bg-green-400 font-bold text-white px-4 py-2 rounded-md flex gap-2 items-center justify-center"
-              {...buttonProp}
-            >
-              <IoIosAddCircleOutline className="text-2xl" /> Add
-            </button>
+            {data.isAdmin == 1 && (
+              <button
+                className="bg-green-400 font-bold text-white px-4 py-2 rounded-md flex gap-2 items-center justify-center"
+                {...buttonProp}
+              >
+                <IoIosAddCircleOutline className="text-2xl" /> Add
+              </button>
+            )}
           </div>
         </CardHeader>
         <CardContent className="p-4 sm:p-6">

@@ -14,12 +14,12 @@ const Breadcrumb = () => {
         {pathnames.map((value, index) => {
           const to = `/${pathnames.slice(0, index + 1).join('/')}`;
           return (
-            <li key={to} className="mx-1 capitalize">
+            <li key={to} className="mx-1 capitalize text-white">
               <span className="mx-2">/</span>
               {index === pathnames.length - 1 ? (
-                <span className="text-gray-500">{value}</span>
+                <span className="text-white">{value}</span>
               ) : (
-                <Link to={to} className="text-blue-600">{value}</Link>
+                <Link to={to} className="text-[#31ABEB]">{value}</Link>
               )}
             </li>
           );

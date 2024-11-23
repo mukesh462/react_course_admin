@@ -30,7 +30,7 @@ import AssessmentForm from "./Forms/AssessmentForm";
 import MyRecording from "./pages/MyRecording";
 import MaterialLink from "./pages/MaterialLink";
 import MaterialForm from "./Forms/MaterialForm";
-
+import banner from './assets/banner.jpg'
 // PrivateRoute Component
 function PrivateRoute({ children }) {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
@@ -48,7 +48,16 @@ function App() {
   const userData = useSelector((state) => state.login.user);
   return (
     <Router>
-      <div className="">
+      <div className="w-full h-vh" 
+     style={{
+      backgroundImage: `url(${banner}) 100% 100%`,
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+      boxShadow: "inset 0 0 0 1000px rgba(0, 0, 0, 0.5)"// Set the fallback background color
+    }}
+        
+        >
         <Routes>
           <Route
             path="/login"
