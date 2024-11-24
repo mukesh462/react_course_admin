@@ -4,6 +4,7 @@ import ThemeToggle from './ThemeToggle';
 import Example from './DropDown';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { MiniLogo } from './Logos';
 
 const Header = ({ toggleSidebar }) => {
 const nav = useNavigate();
@@ -19,7 +20,9 @@ const nav = useNavigate();
           <FaBars />
         </button>
 
-        <h1 className="text-2xl font-bold cursor-pointer" onClick={()=> nav('/')}>GrowTogether</h1>
+        <h1 className=" font-bold cursor-pointer" onClick={()=> nav('/')}>
+          <MiniLogo/>
+        </h1>
         <div>
         {/* <ThemeToggle /> */}
         <Example/>

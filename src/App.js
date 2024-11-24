@@ -46,11 +46,12 @@ function PublicRoute({ children }) {
 
 function App() {
   const userData = useSelector((state) => state.login.user);
+
   return (
     <Router>
       <div className="w-full h-vh" 
      style={{
-      backgroundImage: `url(${banner}) 100% 100%`,
+      backgroundImage: `url(${banner})`,
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center",
