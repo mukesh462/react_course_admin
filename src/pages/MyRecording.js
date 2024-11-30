@@ -29,7 +29,7 @@ export default function MyRecording() {
         limit: itemsPerPage,
       });
       if (response.status) {
-        setData(response.data.data); // Assuming API response has a "records" key
+        setData(response.data); // Assuming API response has a "records" key
         setTotalCount(response.data.totalCount); // Assuming API provides "totalCount"
       } else {
         toast.error(response.message);

@@ -3,7 +3,6 @@ import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/themes/material_blue.css";
 import Switch from "react-switch";
-import "flatpickr/dist/themes/material_blue.css";
 import * as Yup from "yup";
 import SelectSearch from "../components/SelectSearch";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,20 +11,7 @@ import toast from "react-hot-toast";
 import Select from "../components/Select";
 import NormalSelect from "../components/Select";
 
-// const instructors = [
-//   { id: 1, name: "John Doe" },
-//   { id: 2, name: "Jane Smith" },
-// ];
 
-const batches = [
-  { id: 1, name: "Batch A" },
-  { id: 2, name: "Batch B" },
-];
-
-const students = [
-  { id: 1, name: "Student 1" },
-  { id: 2, name: "Student 2" },
-];
 const validationSchema = Yup.object().shape({
   topic_name: Yup.string().required("Topic Name is required"),
   description: Yup.string().required("Description is required"),
@@ -38,7 +24,7 @@ const validationSchema = Yup.object().shape({
   ),
 });
 const ClassForm = () => {
-  const [classType, setClassType] = useState(true); // Switch between individual and batch
+  const [classType, setClassType] = useState(true);
   const { id } = useParams();
   const [isActive, setIsActive] = useState(true);
   const { request } = useApi();
@@ -154,7 +140,6 @@ const ClassForm = () => {
   };
 
   useEffect(() => {
-    console.log(data, "trigger");
     const updateBatchOrStudentSelection = (options, key) => {
       if (options.length > 0 && data.batch_or_student_id) {
         const selectedOption = options.find(
@@ -168,13 +153,10 @@ const ClassForm = () => {
         }
       }
     };
-  
+
     updateBatchOrStudentSelection(batch, "batch_or_student_id");
     updateBatchOrStudentSelection(studentData, "batch_or_student_id");
-  
   }, [batch, studentData, data.batch_or_student_id]);
-  
-  
 
   const submitForm = async (values, { setSubmitting, setErrors }) => {
     const sendpost = {
@@ -205,7 +187,7 @@ const ClassForm = () => {
       <Formik
         initialValues={data}
         enableReinitialize={true}
-        // validationSchema={validationSchema}
+        validationSchema={validationSchema}
         onSubmit={submitForm}
       >
         {({ isSubmitting, setFieldValue, values }) => {
@@ -347,7 +329,7 @@ const ClassForm = () => {
                     htmlFor="batch_or_student_id"
                     className="block font-bold"
                   >
-                    {classType ? "Batch" : "Student"}{" "}
+                    {classType ? "Batch" : "Student"}
                     <span className="text-red-500">*</span>
                   </label>
                   <Field

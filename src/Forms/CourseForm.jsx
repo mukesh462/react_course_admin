@@ -5,12 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useApi from "../components/useApi";
 import toast from "react-hot-toast";
 
-// Sample data for categories and subcategories
-const categories = {
-  "Category A": ["Sub Category A1", "Sub Category A2", "Sub Category A3"],
-  "Category B": ["Sub Category B1", "Sub Category B2"],
-  "Category C": ["Sub Category C1", "Sub Category C2", "Sub Category C3"],
-};
+
 
 const validationSchema = Yup.object().shape({
   category_id: Yup.string().required("Category is required"),

@@ -1,9 +1,9 @@
 import { BiPlay, BiPlayCircle, BiUser } from "react-icons/bi";
 import { BsClock } from "react-icons/bs";
+import imgBanner from '../assets/bannerCourse.png'
 
 
-
-export default function VideoCard({ title, thumbnail = "https://foundr.com/wp-content/uploads/2021/09/Best-online-course-platforms.png", duration, views, date,onClick,src }) {
+export default function VideoCard({ title, thumbnail = imgBanner, duration, views, date,onClick,src }) {
   return (
     <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 p-1 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl dark:from-gray-800 dark:to-gray-900">
       <div className="relative aspect-video overflow-hidden rounded-lg">
