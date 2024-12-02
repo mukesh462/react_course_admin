@@ -31,6 +31,7 @@ import MyRecording from "./pages/MyRecording";
 import MaterialLink from "./pages/MaterialLink";
 import MaterialForm from "./Forms/MaterialForm";
 import banner from './assets/banner.jpg'
+import ViewQuestion from "./pages/ViewQuestion";
 // PrivateRoute Component
 function PrivateRoute({ children }) {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
@@ -99,6 +100,8 @@ function App() {
                       <Route path="/category/:id/" element={<CategoryForm />} />
 
                       <Route path="/batch/create" element={<BatchForm />} />
+                      <Route path="/assessment/:id" element={<ViewQuestion />} />
+
                       <Route path="/Subcategory" element={<SubCategory />} />
                       <Route
                         path="/Subcategory/create"

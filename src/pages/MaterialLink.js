@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import BatchComponent from "../components/ListTable";
 import { useNavigate } from "react-router-dom";
 import { FaRegFileAlt } from "react-icons/fa";
@@ -12,6 +12,7 @@ const MaterialLink = () => {
   const navigate = useNavigate();
   const requestApi = useApi();
   const data = useSelector((state) => state.login?.user);
+  const tableRef = useRef();
 
   const config = [
     {
@@ -74,7 +75,7 @@ const MaterialLink = () => {
           "success"
         );
         toast.success(response.message);
-        window.location.reload();
+        handleRefresh()
       } else {
         Swal.fire("Error!", response.message, "error");
         toast.error(response.message);
@@ -85,12 +86,18 @@ const MaterialLink = () => {
     console.log("Selected Row Data:", data);
     // Add your logic for handling row clicks
   };
-
+  const handleRefresh = () => {
+    console.log(tableRef.current)
+    if (tableRef.current) {
+      tableRef.current.useRefresh();
+    }
+  };
   return (
     <div className="">
       <BatchComponent
         title="Material Link"
         apiUrl={apiUrl}
+        ref={tableRef}
         config={
           data.isAdmin == 1
           ? config

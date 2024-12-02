@@ -6,6 +6,9 @@ import useApi from "../components/useApi";
 import NormalSelect from "../components/Select";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/themes/material_blue.css";
+import toast from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 const validationSchema = Yup.object().shape({
   assessment_type: Yup.string().required("Assessment Type is required"),
   particular_id: Yup.object().shape().required("Particular ID is required"),
@@ -51,11 +54,9 @@ const AssessmentForm = () => {
   const [batch, setBatch] = useState([]);
   const [studentData, setStudentData] = useState([]);
   const { request } = useApi();
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-  const particularOptions = {
-    student: ["Student 1", "Student 2", "Student 3"],
-    batch: ["Batch A", "Batch B", "Batch C"],
-  };
   useEffect(() => {
     getBatchAndStudentData();
   }, []);
@@ -85,6 +86,26 @@ const AssessmentForm = () => {
       console.error("Error fetching batch or student data:", error);
     }
   };
+  const submitForm = async (values, { setSubmitting, setErrors }) => {
+    try {
+      const postUrl = "task/create";
+
+      const response = await request("post", postUrl, {
+        ...values,
+        questions: values.questions.map((e) => ({ ...e, id: uuidv4() })),
+      });
+      if (response.status) {
+        toast.success(response.message);
+        navigate("/assessment");
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      setErrors({ submit: error.message });
+    } finally {
+      setSubmitting(false);
+    }
+  };
   return (
     <div className=" mx-auto mt-10 p-5 border rounded shadow bg-white">
       <Formik
@@ -105,11 +126,7 @@ const AssessmentForm = () => {
           ],
         }}
         validationSchema={validationSchema}
-        onSubmit={(values, { setSubmitting }) => {
-          console.log("Form Data", values);
-          setSubmitting(false);
-          alert("Form submitted successfully!");
-        }}
+        onSubmit={submitForm}
       >
         {({ values, isSubmitting, setFieldValue }) => (
           <Form>
@@ -197,49 +214,49 @@ const AssessmentForm = () => {
                     />
                   </div>
                   <div>
-                  <label htmlFor="start_time" className="block font-bold">
-                    Start Time <span className="text-red-500">*</span>
-                  </label>
-                  <Flatpickr
-                    name="start_time"
-                    className="mt-2 block w-full border rounded-md p-2"
-                    value={values.start_time}
-                    onChange={(time) => setFieldValue("start_time", time[0])}
-                    options={{
-                      enableTime: true,
-                      noCalendar: true,
-                      dateFormat: "H:i",
-                      time_24hr: true,
-                    }}
-                  />
-                  <ErrorMessage
-                    name="start_time"
-                    component="div"
-                    className="text-red-600 text-sm mt-1"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="end_time" className="block font-bold">
-                    End Time <span className="text-red-500">*</span>
-                  </label>
-                  <Flatpickr
-                    name="end_time"
-                    className="mt-2 block w-full border rounded-md p-2"
-                    value={values.end_time}
-                    onChange={(time) => setFieldValue("end_time", time[0])}
-                    options={{
-                      enableTime: true,
-                      noCalendar: true,
-                      dateFormat: "H:i",
-                      time_24hr: true,
-                    }}
-                  />
-                  <ErrorMessage
-                    name="end_time"
-                    component="div"
-                    className="text-red-600 text-sm mt-1"
-                  />
-                </div>
+                    <label htmlFor="start_time" className="block font-bold">
+                      Start Time <span className="text-red-500">*</span>
+                    </label>
+                    <Flatpickr
+                      name="start_time"
+                      className="mt-2 block w-full border rounded-md p-2"
+                      value={values.start_time}
+                      onChange={(time) => setFieldValue("start_time", time[0])}
+                      options={{
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: "H:i",
+                        time_24hr: true,
+                      }}
+                    />
+                    <ErrorMessage
+                      name="start_time"
+                      component="div"
+                      className="text-red-600 text-sm mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="end_time" className="block font-bold">
+                      End Time <span className="text-red-500">*</span>
+                    </label>
+                    <Flatpickr
+                      name="end_time"
+                      className="mt-2 block w-full border rounded-md p-2"
+                      value={values.end_time}
+                      onChange={(time) => setFieldValue("end_time", time[0])}
+                      options={{
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: "H:i",
+                        time_24hr: true,
+                      }}
+                    />
+                    <ErrorMessage
+                      name="end_time"
+                      component="div"
+                      className="text-red-600 text-sm mt-1"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="max-h-[500px] min-h-[450px] overflow-y-scroll">

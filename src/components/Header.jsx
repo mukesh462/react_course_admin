@@ -10,8 +10,8 @@ const Header = ({ toggleSidebar }) => {
 const nav = useNavigate();
 
   return (
-    <header className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-md w-full min-w-full">
-      <div className="px-6 py-2 flex justify-between items-center">
+    <header className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-md w-full min-w-full">
+      <div className=" flex justify-between items-center">
         {/* Hamburger Icon for Sidebar Toggle */}
         <button
           onClick={toggleSidebar}
@@ -20,7 +20,7 @@ const nav = useNavigate();
           <FaBars />
         </button>
 
-        <h1 className=" font-bold cursor-pointer" onClick={()=> nav('/')}>
+        <h1 className=" font-bold cursor-pointer self-start p-1 " onClick={()=> nav('/')}>
           <MiniLogo/>
         </h1>
         <div>

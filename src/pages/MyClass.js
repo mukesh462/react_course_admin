@@ -6,6 +6,7 @@ import useApi from "../components/useApi";
 import toast from "react-hot-toast";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 import { useSelector } from "react-redux";
+import moment from "moment";
 
 const MyClass = () => {
   const apiUrl = "myclass/list";
@@ -24,9 +25,7 @@ const MyClass = () => {
         date.getMonth() + 1
       ).padStart(2, "0")}-${date.getFullYear()}`;
     } else {
-      return `${String(date.getHours()).padStart(2, "0")}:${String(
-        date.getMinutes()
-      ).padStart(2, "0")}`;
+      return moment(dateString).format("hh:mm a");
     }
   };
 
