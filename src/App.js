@@ -30,14 +30,14 @@ import AssessmentForm from "./Forms/AssessmentForm";
 import MyRecording from "./pages/MyRecording";
 import MaterialLink from "./pages/MaterialLink";
 import MaterialForm from "./Forms/MaterialForm";
-import banner from './assets/banner.jpg'
+import banner from "./assets/banner.jpg";
 import ViewQuestion from "./pages/ViewQuestion";
+import ValidatedTask from "./pages/ValidatedTask";
 // PrivateRoute Component
 function PrivateRoute({ children }) {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   return isLoggedIn ? children : <Navigate to="/login" />;
 }
-
 
 // Redirect Logged-in Users from Login
 function PublicRoute({ children }) {
@@ -50,16 +50,16 @@ function App() {
 
   return (
     <Router>
-      <div className="w-full h-vh" 
-     style={{
-      backgroundImage: `url(${banner})`,
-      backgroundSize: "cover",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "center",
-      boxShadow: "inset 0 0 0 1000px rgba(0, 0, 0, 0.5)"// Set the fallback background color
-    }}
-        
-        >
+      <div
+        className="w-full h-vh"
+        style={{
+          backgroundImage: `url(${banner})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          boxShadow: "inset 0 0 0 1000px rgba(0, 0, 0, 0.5)", // Set the fallback background color
+        }}
+      >
         <Routes>
           <Route
             path="/login"
@@ -100,7 +100,14 @@ function App() {
                       <Route path="/category/:id/" element={<CategoryForm />} />
 
                       <Route path="/batch/create" element={<BatchForm />} />
-                      <Route path="/assessment/:id" element={<ViewQuestion />} />
+                      <Route
+                        path="/assessment/:id"
+                        element={<ViewQuestion />}
+                      />
+                      <Route
+                        path="/taskDetails/:id"
+                        element={<ValidatedTask />}
+                      />
 
                       <Route path="/Subcategory" element={<SubCategory />} />
                       <Route

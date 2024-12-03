@@ -1,13 +1,29 @@
 import React, { useState } from "react";
 import CurrentAssessment from "../components/CurrentAssessment";
 import BatchComponent from "../components/ListTable";
+import { useSelector } from "react-redux";
+import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 function TaskView() {
   const [activeTab, setActiveTab] = useState("current");
   const activeTabClass =
     "bg-[#31ABEB] text-white p-2 shadow-md cursor-pointer font-bold";
   const normalTab = "text-gray-400 p-2  cursor-pointer font-bold";
-  const apiUrl = "task/list";
+  const apiUrl = "task/getTaskHistory";
+  const navigate = useNavigate();
+  const isLoggedIn = useSelector((state) => state.login.user);
+  const formatDatetime = (dateString, type) => {
+    const date = new Date(dateString);
+    if (type === "date") {
+      return `${String(date.getDate()).padStart(2, "0")}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}-${date.getFullYear()}`;
+    } else {
+     return moment(dateString).format("hh:mm a");
+     
+    }
+  };
   const config = [
     {
       colname: "ASS Type",
@@ -32,6 +48,54 @@ function TaskView() {
       data: "questions",
       render: (batch) => (
         <span className="badge">{batch.questions.length}</span>
+      ),
+    },
+    {
+      colname: "Start Time",
+      sortable: false,
+      className: "",
+      data: "start_date",
+      render: (batch) => (
+        <span className="">
+          {formatDatetime(batch.start_time, "date") +
+            "  " +
+            formatDatetime(batch.start_time, "time")}
+        </span>
+      ),
+    },
+    {
+      colname: "End Time",
+      sortable: false,
+      className: "",
+      data: "end_date",
+      render: (batch) => (
+        <span className="">
+          {formatDatetime(batch.end_date, "date") +
+            "  " +
+            formatDatetime(batch.end_time, "time")}
+        </span>
+      ),
+    },
+    {
+      colname: "Action",
+      sortable: false,
+      className: "",
+      data: "questions",
+      render: (batch) => (
+        <span className="space-x-2">
+        <button
+          onClick={() => navigate('/taskDetails/'+ batch._id)}
+          className="btn btn-sm btn-primary"
+        >
+          View
+        </button>
+        {/* <button
+          onClick={() => handleEdit(batch)}
+          className="btn btn-sm btn-danger"
+        >
+          Delete
+        </button> */}
+      </span>
       ),
     },
   ];
@@ -66,6 +130,9 @@ function TaskView() {
                   title="Assessment Overview"
                   apiUrl={apiUrl}
                   config={config}
+                  useQuery={{
+                    user_id:isLoggedIn?._id
+                  }}
                   // ref={tableRef}
                   // onClickRow={handleRowSelect}
                 />

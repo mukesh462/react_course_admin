@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-export function TextInputQuestion({ question, numberOf, onAnswerChange }) {
-  const [answers, setAnswers] = useState(Array(numberOf).fill(""));
+export function TextInputQuestion({ question, numberOf, onAnswerChange,readOnly=false,answer }) {
+  const [answers, setAnswers] = useState(answer? answer :Array(numberOf).fill(""));
 
   const handleInputChange = (index, value) => {
     const newAnswers = [...answers];
@@ -22,8 +22,9 @@ export function TextInputQuestion({ question, numberOf, onAnswerChange }) {
               type="text"
               id={`answer-${question}-${index}`}
               value={answers[index]}
+              disabled={readOnly}
               onChange={(e) => handleInputChange(index, e.target.value)}
-              className="w-full p-2 border border-[#31ABEB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:border-transparent"
+              className="w-full p-2 border border-[#31ABEB] disabled:cursor-not-allowed  rounded-md focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:border-transparent"
               placeholder={`Answer ${index + 1}`}
             />
           </div>

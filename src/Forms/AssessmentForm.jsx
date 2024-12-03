@@ -11,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 const validationSchema = Yup.object().shape({
   assessment_type: Yup.string().required("Assessment Type is required"),
+  title: Yup.string().required("Title  is required"),
   particular_id: Yup.object().shape().required("Particular ID is required"),
   start_date: Yup.date().required("Start Date is required"),
   end_date: Yup.date().required("End Date is required"),
@@ -116,6 +117,7 @@ const AssessmentForm = () => {
           end_date: null,
           start_time: null,
           end_time: null,
+          title:'',
           questions: [
             {
               question_type: "input",
@@ -131,8 +133,7 @@ const AssessmentForm = () => {
         {({ values, isSubmitting, setFieldValue }) => (
           <Form>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="">
-                <div className="mb-4">
+              <div className=""><div className="">
                   <label className="block font-bold">Assessment Type</label>
                   <Field
                     as="select"
@@ -156,6 +157,21 @@ const AssessmentForm = () => {
                     className="text-red-600 text-sm mt-1"
                   />
                 </div>
+                <div className="">
+              <label htmlFor="title" className="block font-bold">
+               Title <span className="text-red-500">*</span>
+              </label>
+              <Field
+                type="text"
+                name="title"
+                className="mt-2 block w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
+              />
+              <ErrorMessage
+                name="title"
+                component="div"
+                className="text-red-600 text-sm mt-1"
+              />
+            </div>
                 <div>
                   <label htmlFor="particular_id" className="block font-bold">
                     {assessmentType ? "Student" : "Batch"}

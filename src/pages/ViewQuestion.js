@@ -1,8 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Question } from "../components/Question";
 import { TextInputQuestion } from "../components/TextInputQuestion";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useApi from "../components/useApi";
+import { IoChevronBackCircleOutline } from "react-icons/io5";
+import Swal from "sweetalert2";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 // const questions = [
 //   {
@@ -49,13 +53,15 @@ import useApi from "../components/useApi";
 // ];
 
 export default function ViewQuestion() {
+  
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [questions, setQuestion] = useState([]);
-  const [allData, setallData] = useState({})
+  const [allData, setallData] = useState({});
   const { id } = useParams();
   const { request } = useApi();
   const containerRef = useRef(null);
+  const navigate = useNavigate();
   const questionsPerPage = 2;
   const totalPages = Math.ceil(questions.length / questionsPerPage);
   useEffect(() => {
@@ -63,12 +69,12 @@ export default function ViewQuestion() {
       const response = await request("get", "task/" + id);
       if (response.status) {
         const { data } = response;
-        console.log(data)
+        console.log(data);
         setallData(data);
-        setQuestion(data.questions)
+        setQuestion(data.questions);
       }
     };
-    fetchData()
+    fetchData();
   }, []);
 
   const handleSelect = useCallback((questionId, answer) => {
@@ -92,22 +98,66 @@ export default function ViewQuestion() {
     currentPage * questionsPerPage,
     (currentPage + 1) * questionsPerPage
   );
+  const isLoggedIn = useSelector((state) => state.login.user);
 
   const scrollToTop = () => {
     if (containerRef.current) {
       containerRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
-  const handleSubmit = () => {
+  console.log(allData)
+  const handleSubmit =async () => {
     const mergedData = questions.map((question) => ({
       ...question,
       answer: selectedAnswers[question.id] || null,
     }));
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to Submit ? This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      const response = await request(
+        "post",
+        "task/submitTask/" ,
+        {
+          questions:mergedData,
+          assessment_id:allData?._id,
+          student_id:isLoggedIn?._id
+        }
+      );
+      if (response.status) {
+        Swal.fire(
+          "Submitted!",
+          "Assessment submitted successfully.",
+          "success"
+        );
+        toast.success(response.message);
+       navigate('/assessment')
+      } else {
+        Swal.fire("Error!", response.message, "error");
+        toast.error(response.message);
+      }
+    }
+    
+    // const response = await request('post','')
 
     console.log("Merged Questions and Answers:", mergedData);
   };
   return (
     <div className="m-5">
+      <button
+        onClick={() => navigate("/assessment")}
+        className="btn btn-secondary flex gap-2 items-center justify-center mb-4"
+      >
+        <IoChevronBackCircleOutline size={20} /> Back
+      </button>
+
       <div
         className="scrollable-container flex flex-col px-10"
         ref={containerRef}

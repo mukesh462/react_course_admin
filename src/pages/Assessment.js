@@ -14,7 +14,6 @@ const AssessMent = () => {
 const requestApi = useApi();
   const formatDatetime = (dateString, type) => {
     const date = new Date(dateString);
-    console.log(date);
     if (type === "date") {
       return `${String(date.getDate()).padStart(2, "0")}-${String(
         date.getMonth() + 1
@@ -144,7 +143,8 @@ const requestApi = useApi();
 
   return (
     <div className="">
-      {/* <BatchComponent
+            <TaskView/>
+      <BatchComponent
         title="Assessment Overview"
         apiUrl={apiUrl}
         config={config}
@@ -154,8 +154,8 @@ const requestApi = useApi();
           onClick: () => navigate("/assessment/create"),
           title: "Assessment",
         }}
-      /> */}
-      <TaskView/>
+      />
+
     </div>
   );
 };

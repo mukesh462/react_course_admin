@@ -20,7 +20,7 @@ import { useSelector } from "react-redux";
 
 const BatchComponent = forwardRef(
   (
-    { title = "Batch Overview", apiUrl, config, onClickRow, buttonProp },
+    { title = "Batch Overview", apiUrl, config, onClickRow, buttonProp,useQuery },
     ref
   ) => {
     const [batches, setBatches] = useState([]);
@@ -38,7 +38,8 @@ const BatchComponent = forwardRef(
         const baseUrl = process.env.REACT_APP_URL;
         const response = await axios.post(baseUrl + apiUrl, {
           limit: itemsPerPage,
-          page: page + 1, // API expects page numbers to start from 1
+          page: page + 1,
+          ...useQuery
         });
 
         if (response.data.status) {
