@@ -22,7 +22,7 @@ function Example() {
         ) : (
           <GoPerson className="border border-gray-800 text-4xl p-1 m-0 rounded-full hover:bg-gray-200 transition duration-150" />
         )}
-        <span className="font-bold">{data?.name}</span>
+        <span className="font-bold md:block hidden">{data?.name}</span>
       </MenuButton>
       <MenuItems anchor="bottom " className="bg-white shadow-lg rounded-md ">
         <MenuItem>

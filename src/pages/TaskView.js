@@ -4,6 +4,9 @@ import BatchComponent from "../components/ListTable";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
 function TaskView() {
   const [activeTab, setActiveTab] = useState("current");
@@ -35,6 +38,15 @@ function TaskView() {
       ),
     },
     {
+      colname: "ASS title",
+      sortable: false,
+      className: "",
+      data: "title",
+      render: (batch) => (
+        <span className="capitalize">{batch.title}</span>
+      ),
+    },
+    {
       colname: "Particular",
       sortable: true,
       className: "",
@@ -48,6 +60,18 @@ function TaskView() {
       data: "questions",
       render: (batch) => (
         <span className="badge">{batch.questions.length}</span>
+      ),
+    },
+    {
+      colname: "Mark",
+      sortable: true,
+      className: "",
+      data: "questions",
+      render: (batch) => (
+        
+          batch?.submission_status == 2 ?
+        
+        <CircularProgressbar  value={percentageCal(batch.mark,batch.questions.length ).toFixed(2)} text={batch.mark + ' / ' +batch.questions.length } /> :'----'
       ),
     },
     {
@@ -84,8 +108,9 @@ function TaskView() {
       render: (batch) => (
         <span className="space-x-2">
         <button
-          onClick={() => navigate('/taskDetails/'+ batch._id)}
-          className="btn btn-sm btn-primary"
+          onClick={() => batch.submission_status == 1  ? toast.error('You have Not Participate this Assessment') : navigate('/taskDetails/'+ batch._id)}
+          className="btn btn-sm btn-primary disabled:bg-gray-400 disabled:cursor-not-allowed"
+          disabled={batch.submission_status != 2}
         >
           View
         </button>
@@ -99,6 +124,9 @@ function TaskView() {
       ),
     },
   ];
+  const percentageCal = (mark,total)=>{
+    return (mark /total) *100
+  }
   return (
     <div className=" bg-white rounded-lg mt-2 scrollable-container-100 ">
       <div className="container mx-auto p-4 ">

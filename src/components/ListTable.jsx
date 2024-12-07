@@ -20,7 +20,7 @@ import { useSelector } from "react-redux";
 
 const BatchComponent = forwardRef(
   (
-    { title = "Batch Overview", apiUrl, config, onClickRow, buttonProp,useQuery },
+    { title = "Batch Overview", apiUrl, config, onClickRow, buttonProp,useQuery,create= true },
     ref
   ) => {
     const [batches, setBatches] = useState([]);
@@ -98,7 +98,7 @@ const BatchComponent = forwardRef(
               {title}
             </CardTitle>
             <div className="md:flex block justify-end items-center mb-4 text-sm">
-              {data.isAdmin == 1 && (
+              {data.isAdmin == 1 && create && (
                 <button
                   className="bg-green-400 font-bold text-white px-4 py-2 rounded-md flex gap-2 items-center justify-center"
                   {...buttonProp}

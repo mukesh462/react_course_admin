@@ -7,11 +7,14 @@ import toast from "react-hot-toast";
 import useApi from "../components/useApi";
 import moment from "moment/moment";
 import TaskView from "./TaskView";
+import { useSelector } from "react-redux";
 
 const AssessMent = () => {
   const apiUrl = "task/list"; // Replace with your actual API URL
   const navigate = useNavigate();
-const requestApi = useApi();
+  const requestApi = useApi();
+  const isLoggedIn = useSelector((state) => state.login.user);
+
   const formatDatetime = (dateString, type) => {
     const date = new Date(dateString);
     if (type === "date") {
@@ -19,13 +22,11 @@ const requestApi = useApi();
         date.getMonth() + 1
       ).padStart(2, "0")}-${date.getFullYear()}`;
     } else {
-     return moment(dateString).format("hh:mm a");
-     
+      return moment(dateString).format("hh:mm a");
     }
   };
   const tableRef = useRef();
   const handleRefresh = () => {
-
     if (tableRef.current) {
       tableRef.current.useRefresh();
     }
@@ -90,10 +91,16 @@ const requestApi = useApi();
       render: (batch) => (
         <span className="space-x-2">
           <button
-            onClick={() => navigate('/assessment/'+ batch._id)}
+            onClick={() => navigate("/assessment/" + batch._id)}
             className="btn btn-sm btn-primary"
           >
             View
+          </button>
+          <button
+            onClick={() => navigate("/taskSubmit/" + batch._id)}
+            className="btn btn-sm btn-secondary"
+          >
+            Task
           </button>
           <button
             onClick={() => handleEdit(batch)}
@@ -133,7 +140,7 @@ const requestApi = useApi();
           "success"
         );
         toast.success(response.message);
-        window.location.reload();
+        handleRefresh();
       } else {
         Swal.fire("Error!", response.message, "error");
         toast.error(response.message);
@@ -143,19 +150,21 @@ const requestApi = useApi();
 
   return (
     <div className="">
-            <TaskView/>
-      <BatchComponent
-        title="Assessment Overview"
-        apiUrl={apiUrl}
-        config={config}
-        ref={tableRef}
-        onClickRow={handleRowSelect}
-        buttonProp={{
-          onClick: () => navigate("/assessment/create"),
-          title: "Assessment",
-        }}
-      />
-
+      {isLoggedIn?.isAdmin == 0 ? (
+        <TaskView />
+      ) : (
+        <BatchComponent
+          title="Assessment Overview"
+          apiUrl={apiUrl}
+          config={config}
+          ref={tableRef}
+          onClickRow={handleRowSelect}
+          buttonProp={{
+            onClick: () => navigate("/assessment/create"),
+            title: "Assessment",
+          }}
+        />
+      )}
     </div>
   );
 };

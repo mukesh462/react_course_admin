@@ -22,6 +22,7 @@ const validationSchema = Yup.object().shape({
       Yup.object().shape({
         question_type: Yup.string().required("Question Type is required"),
         question_text: Yup.string().required("Question is required"),
+        remark: Yup.string().required("Remark is required"),
         numberOf: Yup.string().test(
           "count-required",
           "Box count is required min value is 1",
@@ -90,7 +91,7 @@ const AssessmentForm = () => {
   const submitForm = async (values, { setSubmitting, setErrors }) => {
     try {
       const postUrl = "task/create";
-
+      
       const response = await request("post", postUrl, {
         ...values,
         questions: values.questions.map((e) => ({ ...e, id: uuidv4() })),
@@ -117,12 +118,13 @@ const AssessmentForm = () => {
           end_date: null,
           start_time: null,
           end_time: null,
-          title:'',
+          title: "",
           questions: [
             {
               question_type: "input",
               question_text: "",
               options: [],
+              remark:'',
               numberOf: 1,
             },
           ],
@@ -133,7 +135,8 @@ const AssessmentForm = () => {
         {({ values, isSubmitting, setFieldValue }) => (
           <Form>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className=""><div className="">
+              <div className="">
+                <div className="">
                   <label className="block font-bold">Assessment Type</label>
                   <Field
                     as="select"
@@ -158,20 +161,20 @@ const AssessmentForm = () => {
                   />
                 </div>
                 <div className="">
-              <label htmlFor="title" className="block font-bold">
-               Title <span className="text-red-500">*</span>
-              </label>
-              <Field
-                type="text"
-                name="title"
-                className="mt-2 block w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
-              />
-              <ErrorMessage
-                name="title"
-                component="div"
-                className="text-red-600 text-sm mt-1"
-              />
-            </div>
+                  <label htmlFor="title" className="block font-bold">
+                    Title <span className="text-red-500">*</span>
+                  </label>
+                  <Field
+                    type="text"
+                    name="title"
+                    className="mt-2 block w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#31ABEB] focus:shadow-[0_0_5px_#31ABEB]"
+                  />
+                  <ErrorMessage
+                    name="title"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
                 <div>
                   <label htmlFor="particular_id" className="block font-bold">
                     {assessmentType ? "Student" : "Batch"}
@@ -413,6 +416,18 @@ const AssessmentForm = () => {
                               </button>
                             </>
                           )}
+                          <Field
+                          as='textarea'
+                            name={`questions[${index}].remark`}
+                            placeholder="Write your remark here"
+                            className="mt-2 block w-full border rounded-md p-2"
+                          />
+
+                          <ErrorMessage
+                            name={`questions[${index}].remark`}
+                            component="div"
+                            className="text-red-600 text-sm mt-1"
+                          />
                         </div>
                       ))}
 
@@ -424,6 +439,7 @@ const AssessmentForm = () => {
                             question_type: "input",
                             question_text: "",
                             options: [],
+                            remark:'',
                             numberOf: 1,
                           })
                         }

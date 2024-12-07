@@ -15,7 +15,7 @@ const nav = useNavigate();
         {/* Hamburger Icon for Sidebar Toggle */}
         <button
           onClick={toggleSidebar}
-          className="text-2xl text-gray-900 dark:text-white focus:outline-none md:hidden"
+          className="text-2xl ps-3 text-gray-900 dark:text-white focus:outline-none md:hidden"
         >
           <FaBars />
         </button>

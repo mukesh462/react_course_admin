@@ -33,6 +33,7 @@ import MaterialForm from "./Forms/MaterialForm";
 import banner from "./assets/banner.jpg";
 import ViewQuestion from "./pages/ViewQuestion";
 import ValidatedTask from "./pages/ValidatedTask";
+import StudentTask from "./pages/StudentTask";
 // PrivateRoute Component
 function PrivateRoute({ children }) {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
@@ -105,9 +106,17 @@ function App() {
                         element={<ViewQuestion />}
                       />
                       <Route
-                        path="/taskDetails/:id"
-                        element={<ValidatedTask />}
+                        path="/taskDetails/:id/"
+                        element={<ValidatedTask page={'view'}/>}
                       />
+                       <Route
+                        path="/reviewTask/:id/:student_id"
+                        element={<ValidatedTask page={'validate'} />}
+                      />
+                       <Route
+                        path="/taskSubmit/:id"
+                        element={<StudentTask />}
+                        />
 
                       <Route path="/Subcategory" element={<SubCategory />} />
                       <Route

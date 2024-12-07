@@ -107,10 +107,15 @@ export default function ViewQuestion() {
   };
   console.log(allData)
   const handleSubmit =async () => {
+    if (isLoggedIn?.isAdmin == 1) {
+      toast.error('Admin Cannot Submit Assessment')
+      return
+    }
     const mergedData = questions.map((question) => ({
       ...question,
-      answer: selectedAnswers[question.id] || null,
+      answer: selectedAnswers[question.id] || "",
     }));
+    console.log(mergedData,'fefe')
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "Do you really want to Submit ? This action cannot be undone!",
@@ -144,10 +149,6 @@ export default function ViewQuestion() {
         toast.error(response.message);
       }
     }
-    
-    // const response = await request('post','')
-
-    console.log("Merged Questions and Answers:", mergedData);
   };
   return (
     <div className="m-5">
@@ -162,21 +163,25 @@ export default function ViewQuestion() {
         className="scrollable-container flex flex-col px-10"
         ref={containerRef}
       >
-        {currentQuestions.map((q) =>
+        {currentQuestions.map((q ,i) =>
           q.question_type === "input" ? (
             <TextInputQuestion
               key={q.id}
+              index={i}
               question={q.question_text}
               numberOf={q.numberOf || 1} // Default to 1 if numberOf is not provided
               onAnswerChange={(textInputAnswers) =>
                 handleSelect(q.id, textInputAnswers)
               }
+              remark={q.remark}
             />
           ) : (
             <Question
               key={q.id}
               question={q.question_text}
+              index={i}
               options={q.options}
+              remark={q.remark}
               onSelect={(option) => handleSelect(q.id, option)}
               selectedOption={selectedAnswers[q.id] || null}
             />
